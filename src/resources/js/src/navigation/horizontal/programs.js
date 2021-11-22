@@ -10,7 +10,7 @@ export default [
             },
             {
                 title: 'Create new program',
-                route: 'form-wizard',
+                route: 'create-program',
                 icon: 'PackageIcon',
             },
         ],

@@ -1,5 +1,5 @@
 <template>
-    <b-card-code title="Repeating Forms">
+    <div>
         <div>
             <b-form
                 ref="form"
@@ -7,7 +7,6 @@
                 class="repeater-form"
                 @submit.prevent="repeateAgain"
             >
-
                 <!-- Row Loop -->
                 <b-row
                     v-for="(item, index) in items"
@@ -15,66 +14,22 @@
                     :key="item.id"
                     ref="row"
                 >
-
                     <!-- Item Name -->
-                    <b-col md="4">
-                        <b-form-group
-                            label="Item Name"
-                            label-for="item-name"
-                        >
-                            <b-form-input
-                                id="item-name"
-                                type="text"
-                                placeholder="Vuexy Admin Template"
-                            />
-                        </b-form-group>
-                    </b-col>
-
-                    <!-- Cost -->
-                    <b-col md="2">
-                        <b-form-group
-                            label="Cost"
-                            label-for="cost"
-                        >
-                            <b-form-input
-                                id="cost"
-                                type="number"
-                                placeholder="32"
-                            />
-                        </b-form-group>
-                    </b-col>
-
-                    <!-- Quantity -->
-                    <b-col md="2">
-                        <b-form-group
-                            label="Quantity"
-                            label-for="quantity"
-                        >
-                            <b-form-input
-                                id="quantity"
-                                type="number"
-                                placeholder="1"
-                            />
-                        </b-form-group>
-                    </b-col>
-
-                    <!-- Profession -->
                     <b-col
-                        lg="2"
-                        md="1"
+                        md="9"
+                        lg="10"
                     >
                         <b-form-group
-                            label="Price"
-                            label-for="price"
+                            label="Included Service"
+                            label-for="i-included-service"
                         >
                             <b-form-input
-                                id="pzrice"
-                                value="32$"
-                                plaintext
+                                id="i-included-service"
+                                type="text"
+                                placeholder="Enter your included service"
                             />
                         </b-form-group>
                     </b-col>
-
                     <!-- Remove Button -->
                     <b-col
                         lg="2"
@@ -112,11 +67,7 @@
             />
             <span>Add New</span>
         </b-button>
-
-        <template #code>
-            {{ codeBasic }}
-        </template>
-    </b-card-code>
+    </div>
 </template>
 
 <script>
@@ -125,8 +76,8 @@ import {
     BForm, BFormGroup, BFormInput, BRow, BCol, BButton,
 } from 'bootstrap-vue'
 import {heightTransition} from '@core/mixins/ui/transition'
+
 import Ripple from 'vue-ripple-directive'
-import {codeBasic} from './code'
 
 export default {
     components: {
@@ -150,8 +101,7 @@ export default {
                 selected1: 'designer',
                 prevHeight: 0,
             }],
-            nextTodoId: 2,
-            codeBasic,
+            nextTodoId: 2
         }
     },
     mounted() {
@@ -180,7 +130,8 @@ export default {
         initTrHeight() {
             this.trSetHeight(null)
             this.$nextTick(() => {
-                this.trSetHeight(this.$refs.form.scrollHeight)
+                // this.trSetHeight(this.$refs.form.scrollHeight)
+                this.trSetHeight(102)
             })
         },
     },
