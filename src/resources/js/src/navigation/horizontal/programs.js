@@ -5,7 +5,7 @@ export default [
         children: [
             {
                 title: 'All programs',
-                route: 'apps-users-list',
+                route: 'list-program',
                 icon: 'UsersIcon',
             },
             {

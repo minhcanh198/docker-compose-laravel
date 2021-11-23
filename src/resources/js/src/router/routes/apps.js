@@ -239,4 +239,22 @@ export default [
             ],
         },
     },
+
+    {
+        path: '/programs',
+        name: 'list-program',
+        component: () => import('@/views/apps/program/list/List.vue'),
+        meta: {
+            pageTitle: 'List all programs',
+            breadcrumb: [
+                {
+                    text: 'Programs',
+                },
+                {
+                    text: 'All programs',
+                    active: true,
+                },
+            ],
+        },
+    },
 ]
