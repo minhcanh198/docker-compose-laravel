@@ -12,7 +12,7 @@ class LeadRepository
         return Lead::paginate($perPage);
     }
 
-    public function store($data)
+    public function store(array $data)
     {
         Lead::create($data);
     }

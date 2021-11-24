@@ -7,7 +7,6 @@ use App\Models\Provider;
 use App\Repositories\ProviderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use mysql_xdevapi\Exception;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class ProviderController extends Controller
@@ -41,6 +40,5 @@ class ProviderController extends Controller
         } catch (UnauthorizedHttpException $exception) {
             return \response($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
     }
 }

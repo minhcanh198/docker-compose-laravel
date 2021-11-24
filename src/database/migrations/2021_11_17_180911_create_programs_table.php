@@ -18,6 +18,7 @@ class CreateProgramsTable extends Migration
             $table->string('title', 200);
             $table->integer('country_id');
             $table->integer('category_id');
+            $table->integer('focus_id');
             $table->integer('age');
             $table->integer('duration');
             $table->integer('price');
@@ -33,6 +34,7 @@ class CreateProgramsTable extends Migration
             $table->text('included_services', 200)->nullable();
             $table->text('optional_services', 200)->nullable();
             $table->string('status', 20)->nullable();
+            $table->integer('provider_id');
             $table->timestamps();
             $table->softDeletes();
         });

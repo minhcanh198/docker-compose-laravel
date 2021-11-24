@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\ProgramController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,11 @@ Route::group(['middleware' => ['auth:api']], function () {
     //Lead
     Route::get('/leads', [LeadController::class, 'getAll']);
     Route::post('/lead', [LeadController::class, 'createNew']);
+
+    //Program
+    Route::get('/programs', [ProgramController::class, 'getAll']);
+    Route::post('/program', [ProgramController::class, 'createNew']);
+
 });
 
 Route::get('/category/parents', [CategoryController::class, 'getAllParents']);
