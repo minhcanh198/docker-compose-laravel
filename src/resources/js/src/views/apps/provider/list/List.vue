@@ -1,8 +1,7 @@
 <template>
     <div>
-        <program-list-filter></program-list-filter>
-        <b-card title="All programs">
-
+        <provider-list-filter></provider-list-filter>
+        <b-card title="All providers">
             <!-- search input -->
             <div class="custom-search d-flex justify-content-end">
                 <b-form-group>
@@ -166,13 +165,13 @@
 import {
     BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect, BDropdownItem, BDropdown, BCard,
 } from 'bootstrap-vue'
-import ProgramListFilter from "./ProgramListFilter";
 import {VueGoodTable} from 'vue-good-table'
+import ProviderListFilter from "./ProviderListFilter";
 import store from '@/store/index'
 
 export default {
     components: {
-        ProgramListFilter,
+        ProviderListFilter,
         VueGoodTable,
         BAvatar,
         BBadge,
@@ -192,31 +191,19 @@ export default {
             pages: ['3', '5', '10'],
             columns: [
                 {
-                    label: 'Program ID',
-                    field: 'fullName',
+                    label: 'Provider ID',
+                    field: 'id',
                 },
                 {
                     label: 'Provider',
                     field: 'fullName',
                 },
                 {
-                    label: 'Country',
-                    field: 'fullName',
+                    label: 'Website',
+                    field: 'startDate',
                 },
                 {
-                    label: 'Category',
-                    field: 'status',
-                },
-                {
-                    label: 'Focus',
-                    field: 'status',
-                },
-                {
-                    label: 'Program Name',
-                    field: 'fullName',
-                },
-                {
-                    label: 'Status',
+                    label: 'Live Programs',
                     field: 'status',
                 },
                 {

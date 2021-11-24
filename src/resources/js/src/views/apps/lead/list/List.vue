@@ -1,8 +1,7 @@
 <template>
     <div>
-        <program-list-filter></program-list-filter>
-        <b-card title="All programs">
-
+        <lead-list-filter></lead-list-filter>
+        <b-card title="All leads">
             <!-- search input -->
             <div class="custom-search d-flex justify-content-end">
                 <b-form-group>
@@ -26,21 +25,21 @@
                 :rows="rows"
                 :rtl="direction"
                 :search-options="{
-        enabled: true,
-        externalQuery: searchTerm
-      }"
+                    enabled: true,
+                    externalQuery: searchTerm
+                  }"
                 :select-options="{
-        enabled: true,
-        selectOnCheckboxOnly: true,
-        selectionInfoClass: 'custom-class',
-        selectionText: 'rows selected',
-        clearSelectionText: 'clear',
-        disableSelectInfo: true,
-        selectAllByGroup: true,
-      }"
+                    enabled: true,
+                    selectOnCheckboxOnly: true,
+                    selectionInfoClass: 'custom-class',
+                    selectionText: 'rows selected',
+                    clearSelectionText: 'clear',
+                    disableSelectInfo: true,
+                    selectAllByGroup: true,
+                  }"
                 :pagination-options="{
-        enabled: true,
-      }"
+                    enabled: true,
+                  }"
                 @on-sort-change="onSortChange"
             >
                 <template
@@ -53,57 +52,56 @@
                         v-if="props.column.field === 'fullName'"
                         class="text-nowrap"
                     >
-          <b-avatar
-              :src="props.row.avatar"
-              class="mx-1"
-          />
-          <span class="text-nowrap">{{ props.row.fullName }}</span>
-        </span>
+                  <b-avatar
+                      :src="props.row.avatar"
+                      class="mx-1"
+                  />
+                      <span class="text-nowrap">{{ props.row.fullName }}</span>
+                    </span>
 
                     <!-- Column: Status -->
                     <span v-else-if="props.column.field === 'status'">
-          <b-badge :variant="statusVariant(props.row.status)">
-            {{ props.row.status }}
-          </b-badge>
-        </span>
-
+                  <b-badge :variant="statusVariant(props.row.status)">
+                    {{ props.row.status }}
+                  </b-badge>
+                    </span>
                     <!-- Column: Action -->
                     <span v-else-if="props.column.field === 'action'">
-          <span>
-            <b-dropdown
-                variant="link"
-                toggle-class="text-decoration-none"
-                no-caret
-            >
-              <template v-slot:button-content>
-                <feather-icon
-                    icon="MoreVerticalIcon"
-                    size="16"
-                    class="text-body align-middle mr-25"
-                />
-              </template>
-              <b-dropdown-item>
-                <feather-icon
-                    icon="Edit2Icon"
-                    class="mr-50"
-                />
-                <span>Edit</span>
-              </b-dropdown-item>
-              <b-dropdown-item>
-                <feather-icon
-                    icon="TrashIcon"
-                    class="mr-50"
-                />
-                <span>Delete</span>
-              </b-dropdown-item>
-            </b-dropdown>
-          </span>
-        </span>
+                        <span>
+                            <b-dropdown
+                                variant="link"
+                                toggle-class="text-decoration-none"
+                                no-caret
+                            >
+                              <template v-slot:button-content>
+                                <feather-icon
+                                    icon="MoreVerticalIcon"
+                                    size="16"
+                                    class="text-body align-middle mr-25"
+                                />
+                              </template>
+                              <b-dropdown-item>
+                                <feather-icon
+                                    icon="Edit2Icon"
+                                    class="mr-50"
+                                />
+                                <span>Edit</span>
+                              </b-dropdown-item>
+                              <b-dropdown-item>
+                                <feather-icon
+                                    icon="TrashIcon"
+                                    class="mr-50"
+                                />
+                                <span>Delete</span>
+                              </b-dropdown-item>
+                            </b-dropdown>
+                        </span>
+                     </span>
 
                     <!-- Column: Common -->
                     <span v-else>
-          {{ props.formattedRow[props.column.field] }}
-        </span>
+                          {{ props.formattedRow[props.column.field] }}
+                        </span>
                 </template>
 
                 <!-- pagination -->
@@ -115,9 +113,9 @@
 
                         <!-- page length -->
                         <div class="d-flex align-items-center mb-0 mt-1">
-            <span class="text-nowrap ">
-              Showing 1 to
-            </span>
+                            <span class="text-nowrap ">
+                              Showing 1 to
+                            </span>
                             <b-form-select
                                 v-model="pageLength"
                                 :options="pages"
@@ -166,13 +164,13 @@
 import {
     BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect, BDropdownItem, BDropdown, BCard,
 } from 'bootstrap-vue'
-import ProgramListFilter from "./ProgramListFilter";
+import LeadListFilter from "./LeadListFilter";
 import {VueGoodTable} from 'vue-good-table'
 import store from '@/store/index'
 
 export default {
     components: {
-        ProgramListFilter,
+        LeadListFilter,
         VueGoodTable,
         BAvatar,
         BBadge,
@@ -192,32 +190,40 @@ export default {
             pages: ['3', '5', '10'],
             columns: [
                 {
-                    label: 'Program ID',
+                    label: 'Lead ID',
+                    field: 'id',
+                },
+                {
+                    label: 'Date',
+                    field: 'startDate',
+                },
+                {
+                    label: 'Time',
+                    field: 'startDate',
+                },
+                {
+                    label: 'Fist Name',
                     field: 'fullName',
+                },
+                {
+                    label: 'Last Name',
+                    field: 'fullName',
+                },
+                {
+                    label: 'Email',
+                    field: 'email',
+                },
+                {
+                    label: 'Program ID',
+                    field: 'startDate',
                 },
                 {
                     label: 'Provider',
                     field: 'fullName',
                 },
                 {
-                    label: 'Country',
-                    field: 'fullName',
-                },
-                {
-                    label: 'Category',
-                    field: 'status',
-                },
-                {
-                    label: 'Focus',
-                    field: 'status',
-                },
-                {
                     label: 'Program Name',
-                    field: 'fullName',
-                },
-                {
-                    label: 'Status',
-                    field: 'status',
+                    field: 'salary',
                 },
                 {
                     label: 'Action',

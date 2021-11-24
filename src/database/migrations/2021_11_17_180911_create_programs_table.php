@@ -32,6 +32,7 @@ class CreateProgramsTable extends Migration
             $table->text('good_to_know', 800)->nullable();
             $table->text('included_services', 200)->nullable();
             $table->text('optional_services', 200)->nullable();
+            $table->string('status', 20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

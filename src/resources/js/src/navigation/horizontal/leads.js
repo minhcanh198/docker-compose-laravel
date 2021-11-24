@@ -5,7 +5,7 @@ export default [
         children: [
             {
                 title: 'All leads',
-                route: 'apps-users-list',
+                route: 'lead-list',
                 icon: 'UsersIcon',
             },
         ],

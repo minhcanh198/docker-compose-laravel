@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\ProviderController;
+use App\Http\Controllers\LeadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +29,14 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/user/{id}', [UserController::class, 'getUserByID']);
     Route::get('/me', [UserController::class, 'aboutMe']);
     Route::post('/logout', [LoginController::class, 'logout']);
+
+    //Provider
+    Route::get('/providers', [ProviderController::class, 'getAll']);
+    Route::post('/provider', [ProviderController::class, 'createNew']);
+
+    //Lead
+    Route::get('/leads', [LeadController::class, 'getAll']);
+    Route::post('/lead', [LeadController::class, 'createNew']);
 });
 
 Route::get('/category/parents', [CategoryController::class, 'getAllParents']);

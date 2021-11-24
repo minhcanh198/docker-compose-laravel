@@ -2,10 +2,11 @@
 
 namespace App\Policies;
 
+use App\Models\Provider;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class UserPolicy
+class ProviderPolicy
 {
     use HandlesAuthorization;
 
@@ -22,17 +23,19 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
+        return $user->hasRole('superadmin');
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param \App\Models\User $user
-     * @param \App\Models\User $model
+     * @param \App\Models\Provider $provider
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, User $model)
+    public function view(User $user, Provider $provider)
     {
+        //
     }
 
     /**
@@ -43,27 +46,29 @@ class UserPolicy
      */
     public function create(User $user)
     {
+        //
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param \App\Models\User $user
-     * @param \App\Models\User $model
+     * @param \App\Models\Provider $provider
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, User $model)
+    public function update(User $user, Provider $provider)
     {
+        //
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param \App\Models\User $user
-     * @param \App\Models\User $model
+     * @param \App\Models\Provider $provider
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, User $model)
+    public function delete(User $user, Provider $provider)
     {
         //
     }
@@ -72,10 +77,10 @@ class UserPolicy
      * Determine whether the user can restore the model.
      *
      * @param \App\Models\User $user
-     * @param \App\Models\User $model
+     * @param \App\Models\Provider $provider
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, User $model)
+    public function restore(User $user, Provider $provider)
     {
         //
     }
@@ -84,10 +89,10 @@ class UserPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param \App\Models\User $user
-     * @param \App\Models\User $model
+     * @param \App\Models\Provider $provider
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, User $model)
+    public function forceDelete(User $user, Provider $provider)
     {
         //
     }

@@ -5,7 +5,7 @@ export default [
         children: [
             {
                 title: 'All providers',
-                route: 'apps-users-list',
+                route: 'provider-list',
                 icon: 'UsersIcon',
             },
         ],

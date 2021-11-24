@@ -185,17 +185,17 @@ export default [
     // *--------- USER ---- ---------------------------------------*
     // *===============================================---*
     {
-        path: '/apps/users/list',
+        path: '/users',
         name: 'apps-users-list',
         component: () => import('@/views/apps/user/users-list/UsersList.vue'),
     },
     {
-        path: '/apps/users/view/:id',
+        path: '/users/:id/view',
         name: 'apps-users-view',
         component: () => import('@/views/apps/user/users-view/UsersView.vue'),
     },
     {
-        path: '/apps/users/edit/:id',
+        path: '/users/:id/edit',
         name: 'apps-users-edit',
         component: () => import('@/views/apps/user/users-edit/UsersEdit.vue'),
     },
@@ -221,7 +221,7 @@ export default [
         name: 'apps-invoice-edit',
         component: () => import('@/views/apps/invoice/invoice-edit/InvoiceEdit.vue'),
     },
-// PROGRAMS
+    // PROGRAMS
     {
         path: '/programs/new',
         name: 'create-program',
@@ -257,4 +257,41 @@ export default [
             ],
         },
     },
+
+    // LEADS
+    {
+        path: '/leads',
+        name: 'lead-list',
+        component: () => import('@/views/apps/lead/list/List.vue'),
+        meta: {
+            pageTitle: 'List all leads',
+            breadcrumb: [
+                {
+                    text: 'Leads',
+                },
+                {
+                    text: 'All leads',
+                    active: true,
+                },
+            ],
+        },
+    },
+    // PROVIDERS
+    {
+        path: '/providers',
+        name: 'provider-list',
+        component: () => import('@/views/apps/provider/list/List.vue'),
+        meta: {
+            pageTitle: 'List all providers',
+            breadcrumb: [
+                {
+                    text: 'Providers',
+                },
+                {
+                    text: 'All providers',
+                },
+            ],
+        },
+    },
+
 ]
