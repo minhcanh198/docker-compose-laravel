@@ -51,7 +51,7 @@ class UserController extends Controller
         if ($user->cannot('viewAny', User::class)) {
             return response("unauthorized", Response::HTTP_UNAUTHORIZED);
         }
-        $users = $this->user->simplePaginate(10);
+        $users = $this->user->with('roles:id,name')->paginate(10);
         return \response($users);
     }
 

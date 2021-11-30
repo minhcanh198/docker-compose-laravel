@@ -33,7 +33,7 @@ class ProgramController extends Controller
     {
         try {
             $this->authorize('viewAny', Program::class);
-            return \response($this->programRepository->getAll());
+            return \response($this->programRepository->getAll($request->all()));
         } catch (\Exception $exception) {
             return \response($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }

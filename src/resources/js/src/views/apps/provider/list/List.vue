@@ -1,6 +1,6 @@
 <template>
     <div>
-        <provider-list-filter></provider-list-filter>
+        <!--        <provider-list-filter></provider-list-filter>-->
         <b-card title="All providers">
             <!-- search input -->
             <div class="custom-search d-flex justify-content-end">
@@ -46,63 +46,51 @@
                     slot="table-row"
                     slot-scope="props"
                 >
-
-                    <!-- Column: Name -->
-                    <span
-                        v-if="props.column.field === 'fullName'"
-                        class="text-nowrap"
-                    >
-          <b-avatar
-              :src="props.row.avatar"
-              class="mx-1"
-          />
-          <span class="text-nowrap">{{ props.row.fullName }}</span>
-        </span>
-
-                    <!-- Column: Status -->
-                    <span v-else-if="props.column.field === 'status'">
-          <b-badge :variant="statusVariant(props.row.status)">
-            {{ props.row.status }}
-          </b-badge>
-        </span>
+                     <span
+                         v-if="props.column.field === 'provider_id'"
+                         class="text-nowrap"
+                     >
+                          <span class="text-nowrap">{{ formatProviderID(props.row.id) }}
+                          </span>
+                    </span>
 
                     <!-- Column: Action -->
                     <span v-else-if="props.column.field === 'action'">
-          <span>
-            <b-dropdown
-                variant="link"
-                toggle-class="text-decoration-none"
-                no-caret
-            >
-              <template v-slot:button-content>
-                <feather-icon
-                    icon="MoreVerticalIcon"
-                    size="16"
-                    class="text-body align-middle mr-25"
-                />
-              </template>
-              <b-dropdown-item>
-                <feather-icon
-                    icon="Edit2Icon"
-                    class="mr-50"
-                />
-                <span>Edit</span>
-              </b-dropdown-item>
-              <b-dropdown-item>
-                <feather-icon
-                    icon="TrashIcon"
-                    class="mr-50"
-                />
-                <span>Delete</span>
-              </b-dropdown-item>
-            </b-dropdown>
-          </span>
-        </span>
+                          <span>
+                            <b-dropdown
+                                variant="link"
+                                toggle-class="text-decoration-none"
+                                no-caret
+                            >
+                              <template v-slot:button-content>
+                                <feather-icon
+                                    icon="MoreVerticalIcon"
+                                    size="16"
+                                    class="text-body align-middle mr-25"
+                                />
+                              </template>
+                              <b-dropdown-item>
+                                <feather-icon
+                                    icon="Edit2Icon"
+                                    class="mr-50"
+                                />
+                                <span>Edit</span>
+                              </b-dropdown-item>
+                              <b-dropdown-item>
+                                <feather-icon
+                                    icon="TrashIcon"
+                                    class="mr-50"
+                                />
+                                <span>Delete</span>
+                              </b-dropdown-item>
+                            </b-dropdown>
+                          </span>
+                    </span>
 
                     <!-- Column: Common -->
                     <span v-else>
-          {{ props.formattedRow[props.column.field] }}
-        </span>
+                         {{ props.formattedRow[props.column.field] }}
+                    </span>
                 </template>
 
                 <!-- pagination -->
@@ -114,23 +102,23 @@
 
                         <!-- page length -->
                         <div class="d-flex align-items-center mb-0 mt-1">
-            <span class="text-nowrap ">
-              Showing 1 to
-            </span>
+                            <span class="text-nowrap ">
+                              Showing
+                            </span>
                             <b-form-select
                                 v-model="pageLength"
                                 :options="pages"
                                 class="mx-1"
                                 @input="handlePageChange"
                             />
-                            <span class="text-nowrap"> of {{ props.total }} entries </span>
+                            <span class="text-nowrap"> of {{ total }} entries </span>
                         </div>
 
                         <!-- pagination -->
                         <div>
                             <b-pagination
                                 :value="1"
-                                :total-rows="props.total"
+                                :total-rows="total"
                                 :per-page="pageLength"
                                 first-number
                                 last-number
@@ -168,6 +156,8 @@ import {
 import {VueGoodTable} from 'vue-good-table'
 import ProviderListFilter from "./ProviderListFilter";
 import store from '@/store/index'
+import providerStoreModule from "../providerStoreModule";
+import {onUnmounted} from "@vue/composition-api";
 
 export default {
     components: {
@@ -186,21 +176,24 @@ export default {
     data() {
         return {
             log: [],
-            pageLength: 3,
+            pageLength: 5,
+            currentPage: 1,
+            total: 0,
+            searchTerm: '',
             dir: false,
             pages: ['3', '5', '10'],
             columns: [
                 {
                     label: 'Provider ID',
-                    field: 'id',
+                    field: 'provider_id',
                 },
                 {
                     label: 'Provider',
-                    field: 'fullName',
+                    field: 'name',
                 },
                 {
                     label: 'Website',
-                    field: 'startDate',
+                    field: 'website',
                 },
                 {
                     label: 'Live Programs',
@@ -212,7 +205,6 @@ export default {
                 },
             ],
             rows: [],
-            searchTerm: '',
             status: [{
                 1: 'Current', 2: 'Professional', 3: 'Rejected', 4: 'Resigned', 5: 'Applied',
             },
@@ -221,6 +213,7 @@ export default {
                 }],
         }
     },
+
     computed: {
         statusVariant() {
             const statusColor = {
@@ -247,25 +240,60 @@ export default {
         },
     },
     created() {
-        this.$http.get('/good-table/table_ssr')
-            .then(res => {
-                this.rows = res.data
-            })
+        this.fetchProviders()
     },
     methods: {
+        formatProviderID(id) {
+            const idAsStringLength = id.toString().length
+            if (idAsStringLength >= 3)
+                return id
+            if (idAsStringLength === 2) {
+                return '0' + id
+            }
+            return '00' + id
+        },
+
         handleSearch(searching) {
             this.log.push(`The user searched for: ${searching}`)
         },
         handleChangePage(page) {
-            this.log.push(`The user changed the page to: ${page}`)
+            this.currentPage = page
+            this.fetchProviders()
         },
         handlePageChange(active) {
-            this.log.push(`the user change page:  ${active}`)
+            this.pageLength = active
+            this.currentPage = 1
+            this.fetchProviders()
         },
         onSortChange(params) {
             this.log.push(`the user ordered:  ${params[0].type}`)
         },
+        fetchProviders() {
+            this.$store.dispatch('app-provider/fetchProviders', {
+                'per_page': this.pageLength,
+                'search': this.searchTerm,
+                'page': this.currentPage
+            })
+                .then(res => {
+                    this.rows = res.data.data
+                    this.total = res.data.total
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
     },
+    setup() {
+        const PROVIDER_STORE_MODULE_NAME = 'app-provider'
+
+        // Register module
+        if (!store.hasModule(PROVIDER_STORE_MODULE_NAME)) store.registerModule(PROVIDER_STORE_MODULE_NAME, providerStoreModule)
+
+        // UnRegister on leave
+        onUnmounted(() => {
+            if (store.hasModule(PROVIDER_STORE_MODULE_NAME)) store.unregisterModule(PROVIDER_STORE_MODULE_NAME)
+        })
+    }
 }
 </script>
 

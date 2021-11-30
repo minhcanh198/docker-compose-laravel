@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateLeadRequest;
 use App\Models\Lead;
 use App\Repositories\LeadRepository;
-use Dflydev\DotAccessData\Data;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,11 +18,11 @@ class LeadController extends Controller
         $this->leadRepository = $leadRepository;
     }
 
-    public function getAll()
+    public function getAll(Request $request)
     {
         try {
             $this->authorize('viewAny', Lead::class);
-            return response($this->leadRepository->getAll());
+            return response($this->leadRepository->getAll($request->all()));
         } catch (\Exception $exception) {
             return response($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }

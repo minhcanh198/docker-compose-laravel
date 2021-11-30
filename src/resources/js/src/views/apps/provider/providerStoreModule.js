@@ -6,23 +6,23 @@ export default {
     getters: {},
     mutations: {},
     actions: {
-        fetchUsers(ctx, queryParams) {
+        fetchProviders(ctx, queryParams) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get('/api/users', {params: queryParams})
+                    .get('/api/providers', {params: queryParams})
                     .then(response => resolve(response))
                     .catch(error => reject(error))
             })
         },
-        fetchUser(ctx, {id}) {
+        fetchProvider(ctx, {id}) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(`/apps/user/users/${id}`)
+                    .get(`/api/lead/${id}`)
                     .then(response => resolve(response))
                     .catch(error => reject(error))
             })
         },
-        addUser(ctx, userData) {
+        addProvider(ctx, userData) {
             return new Promise((resolve, reject) => {
                 axios
                     .post('/apps/user/users', {user: userData})

@@ -7,9 +7,16 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class LeadRepository
 {
-    public function getAll(int $perPage = 10): LengthAwarePaginator
+    private const programRelationField = 'program:id,title';
+
+    private const providerRelationField = 'provider:id,name';
+
+    public function getAll(array $queryParams): LengthAwarePaginator
     {
-        return Lead::paginate($perPage);
+        return Lead::with(self::programRelationField)
+            ->with(self::providerRelationField)
+            ->paginate($queryParams['per_page'])
+            ->withQueryString();
     }
 
     public function store(array $data)

@@ -36,4 +36,5 @@ import providers from "./providers";
 import programs from "./programs";
 
 // Array of sections
-export default [...dashboard, ...users, ...leads, ...providers, ...programs, ...apps, ...pages, ...others]
+// export default [...dashboard, ...users, ...leads, ...providers, ...programs, ...apps, ...pages, ...others]
+export default [...dashboard, ...users, ...leads, ...providers, ...programs, ...others]

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <lead-list-filter></lead-list-filter>
+        <!--        <lead-list-filter></lead-list-filter>-->
         <b-card title="All leads">
             <!-- search input -->
             <div class="custom-search d-flex justify-content-end">
@@ -46,25 +46,40 @@
                     slot="table-row"
                     slot-scope="props"
                 >
-
-                    <!-- Column: Name -->
+                      <span
+                          v-if="props.column.field === 'lead_id'"
+                          class="text-nowrap"
+                      >
+                      <span class="text-nowrap">{{ formatLeadID(props.row.id) }}</span>
+                    </span>
+                    <!-- Column: Program Name-->
                     <span
-                        v-if="props.column.field === 'fullName'"
+                        v-if="props.column.field === 'program_name'"
                         class="text-nowrap"
                     >
-                  <b-avatar
-                      :src="props.row.avatar"
-                      class="mx-1"
-                  />
-                      <span class="text-nowrap">{{ props.row.fullName }}</span>
+                      <span class="text-nowrap">{{ props.row.program.title }}</span>
                     </span>
+                    <span
+                        v-if="props.column.field === 'created_at_date'"
+                        class="text-nowrap"
+                    >
+                      <span class="text-nowrap">{{ formatCreatedAtDate(props.row.created_at) }}</span>
+                    </span>
+                    <span
+                        v-if="props.column.field === 'created_at_time'"
+                        class="text-nowrap"
+                    >
+                      <span class="text-nowrap">{{ formatCreatedAtTime(props.row.created_at) }}</span>
+                    </span>
+
 
                     <!-- Column: Status -->
                     <span v-else-if="props.column.field === 'status'">
-                  <b-badge :variant="statusVariant(props.row.status)">
-                    {{ props.row.status }}
-                  </b-badge>
+                      <b-badge :variant="statusVariant(props.row.status)">
+                        {{ props.row.status }}
+                      </b-badge>
                     </span>
+
                     <!-- Column: Action -->
                     <span v-else-if="props.column.field === 'action'">
                         <span>
@@ -101,7 +116,7 @@
                     <!-- Column: Common -->
                     <span v-else>
                           {{ props.formattedRow[props.column.field] }}
-                        </span>
+                    </span>
                 </template>
 
                 <!-- pagination -->
@@ -114,7 +129,7 @@
                         <!-- page length -->
                         <div class="d-flex align-items-center mb-0 mt-1">
                             <span class="text-nowrap ">
-                              Showing 1 to
+                              Showing
                             </span>
                             <b-form-select
                                 v-model="pageLength"
@@ -122,14 +137,14 @@
                                 class="mx-1"
                                 @input="handlePageChange"
                             />
-                            <span class="text-nowrap"> of {{ props.total }} entries </span>
+                            <span class="text-nowrap"> of {{ total }} entries </span>
                         </div>
 
                         <!-- pagination -->
                         <div>
                             <b-pagination
                                 :value="1"
-                                :total-rows="props.total"
+                                :total-rows="total"
                                 :per-page="pageLength"
                                 first-number
                                 last-number
@@ -167,6 +182,9 @@ import {
 import LeadListFilter from "./LeadListFilter";
 import {VueGoodTable} from 'vue-good-table'
 import store from '@/store/index'
+import {onUnmounted} from "@vue/composition-api";
+import leadStoreModule from "../leadStoreModule";
+import ToastificationContent from "../../../../@core/components/toastification/ToastificationContent";
 
 export default {
     components: {
@@ -185,29 +203,32 @@ export default {
     data() {
         return {
             log: [],
-            pageLength: 3,
+            total: 0,
+            pageLength: 5,
+            currentPage: 1,
+            searchTerm: '',
             dir: false,
             pages: ['3', '5', '10'],
             columns: [
                 {
                     label: 'Lead ID',
-                    field: 'id',
+                    field: 'lead_id',
                 },
                 {
                     label: 'Date',
-                    field: 'startDate',
+                    field: 'created_at_date',
                 },
                 {
                     label: 'Time',
-                    field: 'startDate',
+                    field: 'created_at_time',
                 },
                 {
                     label: 'Fist Name',
-                    field: 'fullName',
+                    field: 'first_name',
                 },
                 {
                     label: 'Last Name',
-                    field: 'fullName',
+                    field: 'last_name',
                 },
                 {
                     label: 'Email',
@@ -215,15 +236,15 @@ export default {
                 },
                 {
                     label: 'Program ID',
-                    field: 'startDate',
+                    field: 'program_id',
                 },
                 {
                     label: 'Provider',
-                    field: 'fullName',
+                    field: 'provider_id',
                 },
                 {
                     label: 'Program Name',
-                    field: 'salary',
+                    field: 'program_name',
                 },
                 {
                     label: 'Action',
@@ -231,7 +252,6 @@ export default {
                 },
             ],
             rows: [],
-            searchTerm: '',
             status: [{
                 1: 'Current', 2: 'Professional', 3: 'Rejected', 4: 'Resigned', 5: 'Applied',
             },
@@ -266,25 +286,76 @@ export default {
         },
     },
     created() {
-        this.$http.get('/good-table/table_ssr')
-            .then(res => {
-                this.rows = res.data
-            })
+        this.fetchLeads()
     },
     methods: {
+        formatCreatedAtDate(dateTime) {
+            return dateTime.split(' ')[0]
+        },
+        formatCreatedAtTime(dateTime) {
+            return dateTime.split(' ')[1]
+        },
+        formatLeadID(leadID) {
+            const idAsStringLength = leadID.toString().length
+            if (idAsStringLength >= 6)
+                return leadID
+            if (idAsStringLength === 5) {
+                return '0' + leadID
+            }
+            if (idAsStringLength === 4) {
+                return '00' + leadID
+            }
+            if (idAsStringLength === 3) {
+                return '000' + leadID
+            }
+            if (idAsStringLength === 2) {
+                return '0000' + leadID
+            }
+            return '00000' + leadID
+        },
         handleSearch(searching) {
             this.log.push(`The user searched for: ${searching}`)
         },
         handleChangePage(page) {
-            this.log.push(`The user changed the page to: ${page}`)
+            this.currentPage = page
+            this.fetchLeads()
         },
         handlePageChange(active) {
-            this.log.push(`the user change page:  ${active}`)
+            this.pageLength = active
+            this.currentPage = 1
+            this.fetchLeads()
         },
         onSortChange(params) {
             this.log.push(`the user ordered:  ${params[0].type}`)
         },
+
+        fetchLeads() {
+            this.$store.dispatch('app-lead/fetchLeads', {
+                'per_page': this.pageLength,
+                'search': this.searchTerm,
+                'page': this.currentPage
+            })
+                .then(res => {
+                    this.rows = res.data.data
+                    this.total = res.data.total
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
     },
+
+    setup() {
+        const LEAD_STORE_MODULE_NAME = 'app-lead'
+
+        // Register module
+        if (!store.hasModule(LEAD_STORE_MODULE_NAME)) store.registerModule(LEAD_STORE_MODULE_NAME, leadStoreModule)
+
+        // UnRegister on leave
+        onUnmounted(() => {
+            if (store.hasModule(LEAD_STORE_MODULE_NAME)) store.unregisterModule(LEAD_STORE_MODULE_NAME)
+        })
+    }
 }
 </script>
 

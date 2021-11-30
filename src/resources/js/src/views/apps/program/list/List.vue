@@ -1,8 +1,7 @@
 <template>
     <div>
-        <program-list-filter></program-list-filter>
+        <!--        <program-list-filter></program-list-filter>-->
         <b-card title="All programs">
-
             <!-- search input -->
             <div class="custom-search d-flex justify-content-end">
                 <b-form-group>
@@ -48,62 +47,89 @@
                     slot-scope="props"
                 >
 
-                    <!-- Column: Name -->
+                    <!-- Column: Program ID -->
                     <span
-                        v-if="props.column.field === 'fullName'"
+                        v-if="props.column.field === 'program_id'"
                         class="text-nowrap"
                     >
-          <b-avatar
-              :src="props.row.avatar"
-              class="mx-1"
-          />
-          <span class="text-nowrap">{{ props.row.fullName }}</span>
-        </span>
+                        <span class="text-nowrap">{{ formatProgramID(props.row.id) }}</span>
+                    </span>
+
+                    <!-- Column: Program Name -->
+                    <span
+                        v-if="props.column.field === 'provider_name'"
+                        class="text-nowrap"
+                    >
+                        <span class="text-nowrap">{{ props.row.provider.name }}</span>
+                    </span>
+
+                    <!-- Column: Country -->
+                    <span
+                        v-if="props.column.field === 'country_name'"
+                        class="text-nowrap"
+                    >
+                    <span class="text-nowrap">{{ props.row.country.name }}</span>
+                    </span>
+
+                    <!-- Column: Category -->
+                    <span
+                        v-if="props.column.field === 'category_name'"
+                        class="text-nowrap"
+                    >
+                    <span class="text-nowrap">{{ props.row.category.name }}</span>
+                    </span>
+                    <!-- Column: Focus -->
+                    <span
+                        v-if="props.column.field === 'focus_name'"
+                        class="text-nowrap"
+                    >
+                    <span class="text-nowrap">{{ props.row.focus.name }}</span>
+                    </span>
 
                     <!-- Column: Status -->
                     <span v-else-if="props.column.field === 'status'">
-          <b-badge :variant="statusVariant(props.row.status)">
-            {{ props.row.status }}
-          </b-badge>
-        </span>
+                      <b-badge :variant="statusVariant(props.row.status)">
+                        {{ props.row.status }}
+                      </b-badge>
+                    </span>
 
                     <!-- Column: Action -->
                     <span v-else-if="props.column.field === 'action'">
-          <span>
-            <b-dropdown
-                variant="link"
-                toggle-class="text-decoration-none"
-                no-caret
-            >
-              <template v-slot:button-content>
-                <feather-icon
-                    icon="MoreVerticalIcon"
-                    size="16"
-                    class="text-body align-middle mr-25"
-                />
-              </template>
-              <b-dropdown-item>
-                <feather-icon
-                    icon="Edit2Icon"
-                    class="mr-50"
-                />
-                <span>Edit</span>
-              </b-dropdown-item>
-              <b-dropdown-item>
-                <feather-icon
-                    icon="TrashIcon"
-                    class="mr-50"
-                />
-                <span>Delete</span>
-              </b-dropdown-item>
-            </b-dropdown>
-          </span>
-        </span>
+                      <span>
+                        <b-dropdown
+                            variant="link"
+                            toggle-class="text-decoration-none"
+                            no-caret
+                        >
+                          <template v-slot:button-content>
+                            <feather-icon
+                                icon="MoreVerticalIcon"
+                                size="16"
+                                class="text-body align-middle mr-25"
+                            />
+                          </template>
+                          <b-dropdown-item>
+                            <feather-icon
+                                icon="Edit2Icon"
+                                class="mr-50"
+                            />
+                            <span>Edit</span>
+                          </b-dropdown-item>
+                          <b-dropdown-item>
+                            <feather-icon
+                                icon="TrashIcon"
+                                class="mr-50"
+                            />
+                            <span>Delete</span>
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </span>
+                    </span>
 
                     <!-- Column: Common -->
                     <span v-else>
-          {{ props.formattedRow[props.column.field] }}
-        </span>
+                      {{ props.formattedRow[props.column.field] }}
+                    </span>
                 </template>
 
                 <!-- pagination -->
@@ -116,7 +142,7 @@
                         <!-- page length -->
                         <div class="d-flex align-items-center mb-0 mt-1">
             <span class="text-nowrap ">
-              Showing 1 to
+              Showing
             </span>
                             <b-form-select
                                 v-model="pageLength"
@@ -124,14 +150,14 @@
                                 class="mx-1"
                                 @input="handlePageChange"
                             />
-                            <span class="text-nowrap"> of {{ props.total }} entries </span>
+                            <span class="text-nowrap"> of {{ total }} entries </span>
                         </div>
 
                         <!-- pagination -->
                         <div>
                             <b-pagination
                                 :value="1"
-                                :total-rows="props.total"
+                                :total-rows="total"
                                 :per-page="pageLength"
                                 first-number
                                 last-number
@@ -169,6 +195,8 @@ import {
 import ProgramListFilter from "./ProgramListFilter";
 import {VueGoodTable} from 'vue-good-table'
 import store from '@/store/index'
+import programStoreModule from "../programStoreModule";
+import {onUnmounted} from "@vue/composition-api";
 
 export default {
     components: {
@@ -187,33 +215,34 @@ export default {
     data() {
         return {
             log: [],
-            pageLength: 3,
+            pageLength: 5,
+            total: 0,
             dir: false,
             pages: ['3', '5', '10'],
             columns: [
                 {
                     label: 'Program ID',
-                    field: 'fullName',
+                    field: 'program_id',
                 },
                 {
                     label: 'Provider',
-                    field: 'fullName',
+                    field: 'provider_name',
                 },
                 {
                     label: 'Country',
-                    field: 'fullName',
+                    field: 'country_name',
                 },
                 {
                     label: 'Category',
-                    field: 'status',
+                    field: 'category_name',
                 },
                 {
                     label: 'Focus',
-                    field: 'status',
+                    field: 'focus_name',
                 },
                 {
                     label: 'Program Name',
-                    field: 'fullName',
+                    field: 'title',
                 },
                 {
                     label: 'Status',
@@ -226,23 +255,17 @@ export default {
             ],
             rows: [],
             searchTerm: '',
-            status: [{
-                1: 'Current', 2: 'Professional', 3: 'Rejected', 4: 'Resigned', 5: 'Applied',
-            },
-                {
-                    1: 'light-primary', 2: 'light-success', 3: 'light-danger', 4: 'light-warning', 5: 'light-info',
-                }],
         }
     },
     computed: {
         statusVariant() {
             const statusColor = {
                 /* eslint-disable key-spacing */
-                Current: 'light-primary',
-                Professional: 'light-success',
-                Rejected: 'light-danger',
-                Resigned: 'light-warning',
-                Applied: 'light-info',
+                PENDING: 'light-primary',
+                LIVE: 'light-success',
+                INACTIVE: 'light-danger',
+                NEW: 'light-warning',
+                UPDATED: 'light-info',
                 /* eslint-enable key-spacing */
             }
 
@@ -260,25 +283,63 @@ export default {
         },
     },
     created() {
-        this.$http.get('/good-table/table_ssr')
-            .then(res => {
-                this.rows = res.data
-            })
+        this.fetchPrograms()
     },
     methods: {
+        formatProgramID(id) {
+            const idAsStringLength = id.toString().length
+            if (idAsStringLength >= 4)
+                return id
+            if (idAsStringLength === 3) {
+                return '0' + id
+            }
+            if (idAsStringLength === 2) {
+                return '00' + id
+            }
+            return '000' + id
+        },
         handleSearch(searching) {
             this.log.push(`The user searched for: ${searching}`)
         },
         handleChangePage(page) {
-            this.log.push(`The user changed the page to: ${page}`)
+            this.currentPage = page
+            this.fetchPrograms()
         },
         handlePageChange(active) {
-            this.log.push(`the user change page:  ${active}`)
+            this.pageLength = active
+            this.currentPage = 1
+            this.fetchPrograms()
         },
         onSortChange(params) {
             this.log.push(`the user ordered:  ${params[0].type}`)
         },
+        fetchPrograms() {
+            this.$store.dispatch('app-program/fetchPrograms', {
+                'per_page': this.pageLength,
+                'search': this.searchTerm,
+                'page': this.currentPage
+            })
+                .then(res => {
+                    this.rows = res.data.data
+                    this.total = res.data.total
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+
     },
+    setup() {
+        const PROGRAM_STORE_MODULE_NAME = 'app-program'
+
+        // Register module
+        if (!store.hasModule(PROGRAM_STORE_MODULE_NAME)) store.registerModule(PROGRAM_STORE_MODULE_NAME, programStoreModule)
+
+        // UnRegister on leave
+        onUnmounted(() => {
+            if (store.hasModule(PROGRAM_STORE_MODULE_NAME)) store.unregisterModule(PROGRAM_STORE_MODULE_NAME)
+        })
+    }
 }
 </script>
 

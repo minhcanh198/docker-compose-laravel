@@ -6,23 +6,23 @@ export default {
     getters: {},
     mutations: {},
     actions: {
-        fetchUsers(ctx, queryParams) {
+        fetchLeads(ctx, queryParams) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get('/api/users', {params: queryParams})
+                    .get('/api/leads', {params: queryParams})
                     .then(response => resolve(response))
                     .catch(error => reject(error))
             })
         },
-        fetchUser(ctx, {id}) {
+        fetchLead(ctx, {id}) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(`/apps/user/users/${id}`)
+                    .get(`/api/lead/${id}`)
                     .then(response => resolve(response))
                     .catch(error => reject(error))
             })
         },
-        addUser(ctx, userData) {
+        addLead(ctx, userData) {
             return new Promise((resolve, reject) => {
                 axios
                     .post('/apps/user/users', {user: userData})

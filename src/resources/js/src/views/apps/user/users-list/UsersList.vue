@@ -1,246 +1,215 @@
 <template>
 
-  <div>
+    <div>
 
-    <user-list-add-new
-      :is-add-new-user-sidebar-active.sync="isAddNewUserSidebarActive"
-      :role-options="roleOptions"
-      :plan-options="planOptions"
-      @refetch-data="refetchData"
-    />
+        <user-list-add-new
+            :is-add-new-user-sidebar-active.sync="isAddNewUserSidebarActive"
+            :role-options="roleOptions"
+            @refetch-data="refetchData"
+        />
 
-    <!-- Filters -->
-    <users-list-filters
-      :role-filter.sync="roleFilter"
-      :plan-filter.sync="planFilter"
-      :status-filter.sync="statusFilter"
-      :role-options="roleOptions"
-      :plan-options="planOptions"
-      :status-options="statusOptions"
-    />
+        <!-- Filters -->
+        <users-list-filters
+            :role-filter.sync="roleFilter"
+            :status-filter.sync="statusFilter"
+            :role-options="roleOptions"
+            :status-options="statusOptions"
+        />
 
-    <!-- Table Container Card -->
-    <b-card
-      no-body
-      class="mb-0"
-    >
+        <!-- Table Container Card -->
+        <b-card
+            no-body
+            class="mb-0"
+        >
 
-      <div class="m-2">
+            <div class="m-2">
 
-        <!-- Table Top -->
-        <b-row>
+                <!-- Table Top -->
+                <b-row>
 
-          <!-- Per Page -->
-          <b-col
-            cols="12"
-            md="6"
-            class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
-          >
-            <label>Show</label>
-            <v-select
-              v-model="perPage"
-              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-              :options="perPageOptions"
-              :clearable="false"
-              class="per-page-selector d-inline-block mx-50"
-            />
-            <label>entries</label>
-          </b-col>
+                    <!-- Per Page -->
+                    <b-col
+                        cols="12"
+                        md="6"
+                        class="d-flex align-items-center justify-content-start mb-1 mb-md-0"
+                    >
+                        <label>Show</label>
+                        <v-select
+                            v-model="perPage"
+                            :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                            :options="perPageOptions"
+                            :clearable="false"
+                            class="per-page-selector d-inline-block mx-50"
+                        />
+                        <label>entries</label>
+                    </b-col>
 
-          <!-- Search -->
-          <b-col
-            cols="12"
-            md="6"
-          >
-            <div class="d-flex align-items-center justify-content-end">
-              <b-form-input
-                v-model="searchQuery"
-                class="d-inline-block mr-1"
-                placeholder="Search..."
-              />
-              <b-button
-                variant="primary"
-                @click="isAddNewUserSidebarActive = true"
-              >
-                <span class="text-nowrap">Add User</span>
-              </b-button>
+                    <!-- Search -->
+                    <b-col
+                        cols="12"
+                        md="6"
+                    >
+                        <div class="d-flex align-items-center justify-content-end">
+                            <b-form-input
+                                v-model="searchQuery"
+                                class="d-inline-block mr-1"
+                                placeholder="Search..."
+                            />
+                            <b-button
+                                variant="primary"
+                                @click="isAddNewUserSidebarActive = true"
+                            >
+                                <span class="text-nowrap">Add User</span>
+                            </b-button>
+                        </div>
+                    </b-col>
+                </b-row>
+
             </div>
-          </b-col>
-        </b-row>
 
-      </div>
-
-      <b-table
-        ref="refUserListTable"
-        class="position-relative"
-        :items="fetchUsers"
-        responsive
-        :fields="tableColumns"
-        primary-key="id"
-        :sort-by.sync="sortBy"
-        show-empty
-        empty-text="No matching records found"
-        :sort-desc.sync="isSortDirDesc"
-      >
-
-        <!-- Column: User -->
-        <template #cell(user)="data">
-          <b-media vertical-align="center">
-            <template #aside>
-              <b-avatar
-                size="32"
-                :src="data.item.avatar"
-                :text="avatarText(data.item.fullName)"
-                :variant="`light-${resolveUserRoleVariant(data.item.role)}`"
-                :to="{ name: 'apps-users-view', params: { id: data.item.id } }"
-              />
-            </template>
-            <b-link
-              :to="{ name: 'apps-users-view', params: { id: data.item.id } }"
-              class="font-weight-bold d-block text-nowrap"
+            <b-table
+                ref="refUserListTable"
+                class="position-relative"
+                :items="fetchUsers"
+                responsive
+                :fields="tableColumns"
+                primary-key="id"
+                :sort-by.sync="sortBy"
+                show-empty
+                empty-text="No matching records found"
+                :sort-desc.sync="isSortDirDesc"
             >
-              {{ data.item.fullName }}
-            </b-link>
-            <small class="text-muted">@{{ data.item.username }}</small>
-          </b-media>
-        </template>
 
-        <!-- Column: Role -->
-        <template #cell(role)="data">
-          <div class="text-nowrap">
-            <feather-icon
-              :icon="resolveUserRoleIcon(data.item.role)"
-              size="18"
-              class="mr-50"
-              :class="`text-${resolveUserRoleVariant(data.item.role)}`"
-            />
-            <span class="align-text-top text-capitalize">{{ data.item.role }}</span>
-          </div>
-        </template>
+                <!-- Column: User -->
+                <template #cell(firstname)="data">
+                    <b-media vertical-align="center" class="align-items-center">
+                        <template #aside>
+                            <b-avatar
+                                size="32"
+                                :src="data.item.avatar"
+                                :text="avatarText(data.item.firstname)"
+                                :variant="`light-${resolveUserRoleVariant(data.item.role)}`"
+                                :to="{ name: 'apps-users-view', params: { id: data.item.id } }"
+                            />
+                        </template>
+                        <b-link
+                            :to="{ name: 'apps-users-view', params: { id: data.item.id } }"
+                            class="font-weight-bold d-block text-nowrap"
+                        >
+                            {{ data.item.firstname }}
+                        </b-link>
+                        <!--                                                <small class="text-muted">@{{ data.item.firstname }}</small>-->
+                    </b-media>
+                </template>
 
-        <!-- Column: Status -->
-        <template #cell(status)="data">
-          <b-badge
-            pill
-            :variant="`light-${resolveUserStatusVariant(data.item.status)}`"
-            class="text-capitalize"
-          >
-            {{ data.item.status }}
-          </b-badge>
-        </template>
+                <!-- Column: Role -->
+                <template #cell(role)="data">
+                    <div class="text-nowrap">
+                        <feather-icon
+                            :icon="resolveUserRoleIcon(data.item.role)"
+                            size="18"
+                            class="mr-50"
+                            :class="`text-${resolveUserRoleVariant(data.item.role)}`"
+                        />
+                        <span class="align-text-top text-capitalize">{{ data.item.roles[0].name }}</span>
+                    </div>
+                </template>
 
-        <!-- Column: Actions -->
-        <template #cell(actions)="data">
-          <b-dropdown
-            variant="link"
-            no-caret
-            :right="$store.state.appConfig.isRTL"
-          >
+                <!-- Column: Status -->
+                <template #cell(status)="data">
+                    <b-badge
+                        pill
+                        :variant="`light-${resolveUserStatusVariant(data.item.status)}`"
+                        class="text-capitalize"
+                    >
+                        {{ data.item.status }}
+                    </b-badge>
+                </template>
 
-            <template #button-content>
-              <feather-icon
-                icon="MoreVerticalIcon"
-                size="16"
-                class="align-middle text-body"
-              />
-            </template>
-            <b-dropdown-item :to="{ name: 'apps-users-view', params: { id: data.item.id } }">
-              <feather-icon icon="FileTextIcon" />
-              <span class="align-middle ml-50">Details</span>
-            </b-dropdown-item>
+                <!-- Column: Actions -->
+                <template #cell(actions)="data">
+                    <b-dropdown
+                        variant="link"
+                        no-caret
+                        :right="$store.state.appConfig.isRTL"
+                    >
 
-            <b-dropdown-item :to="{ name: 'apps-users-edit', params: { id: data.item.id } }">
-              <feather-icon icon="EditIcon" />
-              <span class="align-middle ml-50">Edit</span>
-            </b-dropdown-item>
+                        <template #button-content>
+                            <feather-icon
+                                icon="MoreVerticalIcon"
+                                size="16"
+                                class="align-middle text-body"
+                            />
+                        </template>
+                        <b-dropdown-item :to="{ name: 'apps-users-view', params: { id: data.item.id } }">
+                            <feather-icon icon="FileTextIcon"/>
+                            <span class="align-middle ml-50">Details</span>
+                        </b-dropdown-item>
 
-            <b-dropdown-item>
-              <feather-icon icon="TrashIcon" />
-              <span class="align-middle ml-50">Delete</span>
-            </b-dropdown-item>
-          </b-dropdown>
-        </template>
+                        <b-dropdown-item :to="{ name: 'apps-users-edit', params: { id: data.item.id } }">
+                            <feather-icon icon="EditIcon"/>
+                            <span class="align-middle ml-50">Edit</span>
+                        </b-dropdown-item>
 
-      </b-table>
-      <div class="mx-2 mb-2">
-        <b-row>
+                        <b-dropdown-item>
+                            <feather-icon icon="TrashIcon"/>
+                            <span class="align-middle ml-50">Delete</span>
+                        </b-dropdown-item>
+                    </b-dropdown>
+                </template>
 
-          <b-col
-            cols="12"
-            sm="6"
-            class="d-flex align-items-center justify-content-center justify-content-sm-start"
-          >
-            <span class="text-muted">Showing {{ dataMeta.from }} to {{ dataMeta.to }} of {{ dataMeta.of }} entries</span>
-          </b-col>
-          <!-- Pagination -->
-          <b-col
-            cols="12"
-            sm="6"
-            class="d-flex align-items-center justify-content-center justify-content-sm-end"
-          >
+            </b-table>
+            <div class="mx-2 mb-2">
+                <b-row>
 
-            <b-pagination
-              v-model="currentPage"
-              :total-rows="totalUsers"
-              :per-page="perPage"
-              first-number
-              last-number
-              class="mb-0 mt-1 mt-sm-0"
-              prev-class="prev-item"
-              next-class="next-item"
-            >
-              <template #prev-text>
-                <feather-icon
-                  icon="ChevronLeftIcon"
-                  size="18"
-                />
-              </template>
-              <template #next-text>
-                <feather-icon
-                  icon="ChevronRightIcon"
-                  size="18"
-                />
-              </template>
-            </b-pagination>
+                    <b-col
+                        cols="12"
+                        sm="6"
+                        class="d-flex align-items-center justify-content-center justify-content-sm-start"
+                    >
+                        <span class="text-muted">Showing {{ dataMeta.from }} to {{ dataMeta.to }} of {{ dataMeta.of }} entries</span>
+                    </b-col>
+                    <!-- Pagination -->
+                    <b-col
+                        cols="12"
+                        sm="6"
+                        class="d-flex align-items-center justify-content-center justify-content-sm-end"
+                    >
 
-          </b-col>
+                        <b-pagination
+                            v-model="currentPage"
+                            :total-rows="totalUsers"
+                            :per-page="perPage"
+                            first-number
+                            last-number
+                            class="mb-0 mt-1 mt-sm-0"
+                            prev-class="prev-item"
+                            next-class="next-item"
+                        >
+                            <template #prev-text>
+                                <feather-icon
+                                    icon="ChevronLeftIcon"
+                                    size="18"
+                                />
+                            </template>
+                            <template #next-text>
+                                <feather-icon
+                                    icon="ChevronRightIcon"
+                                    size="18"
+                                />
+                            </template>
+                        </b-pagination>
 
-        </b-row>
-      </div>
-    </b-card>
-  </div>
+                    </b-col>
+
+                </b-row>
+            </div>
+        </b-card>
+    </div>
 </template>
 
 <script>
 import {
-  BCard,
-  BRow,
-  BCol,
-  BFormInput,
-  BButton,
-  BTable,
-  BMedia,
-  BAvatar,
-  BLink,
-  BBadge,
-  BDropdown,
-  BDropdownItem,
-  BPagination,
-} from 'bootstrap-vue'
-import vSelect from 'vue-select'
-import store from '@/store'
-import { ref, onUnmounted } from '@vue/composition-api'
-import { avatarText } from '@core/utils/filter'
-import UsersListFilters from './UsersListFilters.vue'
-import useUsersList from './useUsersList'
-import userStoreModule from '../userStoreModule'
-import UserListAddNew from './UserListAddNew.vue'
-
-export default {
-  components: {
-    UsersListFilters,
-    UserListAddNew,
-
     BCard,
     BRow,
     BCol,
@@ -254,109 +223,126 @@ export default {
     BDropdown,
     BDropdownItem,
     BPagination,
+} from 'bootstrap-vue'
+import vSelect from 'vue-select'
+import store from '@/store'
+import {ref, onUnmounted} from '@vue/composition-api'
+import {avatarText} from '@core/utils/filter'
+import UsersListFilters from './UsersListFilters.vue'
+import useUsersList from './useUsersList'
+import userStoreModule from '../userStoreModule'
+import UserListAddNew from './UserListAddNew.vue'
 
-    vSelect,
-  },
-  setup() {
-    const USER_APP_STORE_MODULE_NAME = 'app-user'
+export default {
+    components: {
+        UsersListFilters,
+        UserListAddNew,
 
-    // Register module
-    if (!store.hasModule(USER_APP_STORE_MODULE_NAME)) store.registerModule(USER_APP_STORE_MODULE_NAME, userStoreModule)
+        BCard,
+        BRow,
+        BCol,
+        BFormInput,
+        BButton,
+        BTable,
+        BMedia,
+        BAvatar,
+        BLink,
+        BBadge,
+        BDropdown,
+        BDropdownItem,
+        BPagination,
 
-    // UnRegister on leave
-    onUnmounted(() => {
-      if (store.hasModule(USER_APP_STORE_MODULE_NAME)) store.unregisterModule(USER_APP_STORE_MODULE_NAME)
-    })
+        vSelect,
+    },
+    setup() {
+        const USER_APP_STORE_MODULE_NAME = 'app-user'
 
-    const isAddNewUserSidebarActive = ref(false)
+        // Register module
+        if (!store.hasModule(USER_APP_STORE_MODULE_NAME)) store.registerModule(USER_APP_STORE_MODULE_NAME, userStoreModule)
 
-    const roleOptions = [
-      { label: 'Admin', value: 'admin' },
-      { label: 'Author', value: 'author' },
-      { label: 'Editor', value: 'editor' },
-      { label: 'Maintainer', value: 'maintainer' },
-      { label: 'Subscriber', value: 'subscriber' },
-    ]
+        // UnRegister on leave
+        onUnmounted(() => {
+            if (store.hasModule(USER_APP_STORE_MODULE_NAME)) store.unregisterModule(USER_APP_STORE_MODULE_NAME)
+        })
 
-    const planOptions = [
-      { label: 'Basic', value: 'basic' },
-      { label: 'Company', value: 'company' },
-      { label: 'Enterprise', value: 'enterprise' },
-      { label: 'Team', value: 'team' },
-    ]
+        const isAddNewUserSidebarActive = ref(false)
 
-    const statusOptions = [
-      { label: 'Pending', value: 'pending' },
-      { label: 'Active', value: 'active' },
-      { label: 'Inactive', value: 'inactive' },
-    ]
+        const roleOptions = [
+            {label: 'Admin', value: 'superadmin'},
+            {label: 'Provider', value: 'provider'},
+            {label: 'Manager>', value: 'manager'},
+        ]
 
-    const {
-      fetchUsers,
-      tableColumns,
-      perPage,
-      currentPage,
-      totalUsers,
-      dataMeta,
-      perPageOptions,
-      searchQuery,
-      sortBy,
-      isSortDirDesc,
-      refUserListTable,
-      refetchData,
 
-      // UI
-      resolveUserRoleVariant,
-      resolveUserRoleIcon,
-      resolveUserStatusVariant,
+        const statusOptions = [
+            {label: 'Pending', value: 'pending'},
+            {label: 'Active', value: 'active'},
+            {label: 'Inactive', value: 'inactive'},
+        ]
 
-      // Extra Filters
-      roleFilter,
-      planFilter,
-      statusFilter,
-    } = useUsersList()
+        const {
+            fetchUsers,
+            tableColumns,
+            perPage,
+            currentPage,
+            totalUsers,
+            dataMeta,
+            perPageOptions,
+            searchQuery,
+            sortBy,
+            isSortDirDesc,
+            refUserListTable,
+            refetchData,
 
-    return {
-      // Sidebar
-      isAddNewUserSidebarActive,
+            // UI
+            resolveUserRoleVariant,
+            resolveUserRoleIcon,
+            resolveUserStatusVariant,
 
-      fetchUsers,
-      tableColumns,
-      perPage,
-      currentPage,
-      totalUsers,
-      dataMeta,
-      perPageOptions,
-      searchQuery,
-      sortBy,
-      isSortDirDesc,
-      refUserListTable,
-      refetchData,
+            // Extra Filters
+            roleFilter,
+            statusFilter,
+        } = useUsersList()
 
-      // Filter
-      avatarText,
+        return {
+            // Sidebar
+            isAddNewUserSidebarActive,
 
-      // UI
-      resolveUserRoleVariant,
-      resolveUserRoleIcon,
-      resolveUserStatusVariant,
+            fetchUsers,
+            tableColumns,
+            perPage,
+            currentPage,
+            totalUsers,
+            dataMeta,
+            perPageOptions,
+            searchQuery,
+            sortBy,
+            isSortDirDesc,
+            refUserListTable,
+            refetchData,
 
-      roleOptions,
-      planOptions,
-      statusOptions,
+            // Filter
+            avatarText,
 
-      // Extra Filters
-      roleFilter,
-      planFilter,
-      statusFilter,
-    }
-  },
+            // UI
+            resolveUserRoleVariant,
+            resolveUserRoleIcon,
+            resolveUserStatusVariant,
+
+            roleOptions,
+            statusOptions,
+
+            // Extra Filters
+            roleFilter,
+            statusFilter,
+        }
+    },
 }
 </script>
 
 <style lang="scss" scoped>
 .per-page-selector {
-  width: 90px;
+    width: 90px;
 }
 </style>
 

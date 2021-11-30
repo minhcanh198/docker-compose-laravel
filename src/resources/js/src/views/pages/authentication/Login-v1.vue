@@ -7,7 +7,7 @@
                 <b-link class="brand-logo">
                     <vuexy-logo/>
                     <h2 class="brand-text text-primary ml-1">
-                        Vuexy
+                        Hub
                     </h2>
                 </b-link>
 
@@ -36,11 +36,11 @@
                                 #default="{ errors }"
                                 name="Email"
                                 vid="email"
-                                rules="required|email"
+                                rules="required"
                             >
                                 <b-form-input
                                     id="login-email"
-                                    v-model="userEmail"
+                                    v-model="username"
                                     :state="errors.length > 0 ? false:null"
                                     name="login-email"
                                     placeholder="john@example.com"
@@ -137,6 +137,7 @@ import VuexyLogo from '@core/layouts/components/Logo.vue'
 import {required, email} from '@validations'
 import {togglePasswordVisibility} from '@core/mixins/ui/forms'
 import {getHomeRouteForLoggedInUser} from '@/auth/utils'
+import ToastificationContent from "../../../@core/components/toastification/ToastificationContent";
 
 export default {
     components: {
@@ -160,8 +161,8 @@ export default {
     data() {
         return {
             status: '',
-            password: 'admin',
-            userEmail: 'admin@demo.com',
+            password: 'admin123',
+            username: 'superadmin@mail',
             sideImg: require('@/assets/images/pages/login-v2.svg'),
 
             // validation rules
@@ -186,30 +187,40 @@ export default {
         login() {
             this.$refs.loginForm.validate().then(success => {
                 if (success) {
-                    useJwt
-                        .login({
-                            email: this.userEmail,
-                            password: this.password,
-                        })
+                    useJwt.login({
+                        username: this.username,
+                        password: this.password,
+                    })
                         .then(response => {
-                            const {userData} = response.data
-                            useJwt.setToken(response.data.accessToken)
-                            useJwt.setRefreshToken(response.data.refreshToken)
-                            localStorage.setItem('userData', JSON.stringify(userData))
-                            this.$ability.update(userData.ability)
-                            this.$store.commit('app-ecommerce/UPDATE_CART_ITEMS_COUNT', userData.extras.eCommerceCartItemsCount)
-                            this.$router.replace(getHomeRouteForLoggedInUser(userData.role)).then(() => {
-                                this.$toast({
-                                    component: ToastificationContent,
-                                    position: 'top-right',
-                                    props: {
-                                        title: `Welcome ${userData.fullName || userData.username}`,
-                                        icon: 'CoffeeIcon',
-                                        variant: 'success',
-                                        text: `You have successfully logged in as ${userData.role}. Now you can start to explore!`,
-                                    },
-                                })
+                            useJwt.setToken(response.data.access_token)
+                            useJwt.getUserInfo()
+                                .then(userDataRes => {
+                                    const userData = userDataRes.data
+                                    localStorage.setItem('userData', JSON.stringify(userData))
+
+                                    this.$ability.update([
+                                        {
+                                            action: 'manage',
+                                            subject: 'all',
+                                        },
+                                    ])
+
+                                    this.$router.replace(getHomeRouteForLoggedInUser(userData.roles[0].name)).then(() => {
+                                        this.$toast({
+                                            component: ToastificationContent,
+                                            position: 'top-right',
+                                            props: {
+                                                title: `Welcome ${userData.title} ${userData.firstname} ${userData.lastname}`,
+                                                icon: 'CoffeeIcon',
+                                                variant: 'success',
+                                                text: `You have successfully logged in as ${userData.roles[0].name}. Now you can start to explore!`,
+                                            },
+                                        })
+                                    })
+                                }).catch(error => {
+                                this.$refs.loginForm.setErrors(error.response.data.error)
                             })
+
                         })
                         .catch(error => {
                             this.$refs.loginForm.setErrors(error.response.data.error)
