@@ -39,10 +39,10 @@
                     @reset.prevent="resetForm"
                 >
 
-                    <!-- Full Name -->
+                    <!--Firstname-->
                     <validation-provider
                         #default="validationContext"
-                        name="Full Name"
+                        name="Firstname"
                         rules="required"
                     >
                         <b-form-group
@@ -51,7 +51,7 @@
                         >
                             <b-form-input
                                 id="first-name"
-                                v-model="userData.fullName"
+                                v-model="userData.firstName"
                                 autofocus
                                 :state="getValidationState(validationContext)"
                                 trim
@@ -63,10 +63,10 @@
                             </b-form-invalid-feedback>
                         </b-form-group>
                     </validation-provider>
-                    <!-- Full Name -->
+                    <!-- Lastname -->
                     <validation-provider
                         #default="validationContext"
-                        name="Full Name"
+                        name="Lastname"
                         rules="required"
                     >
                         <b-form-group
@@ -75,7 +75,7 @@
                         >
                             <b-form-input
                                 id="last-name"
-                                v-model="userData.fullName"
+                                v-model="userData.lastName"
                                 autofocus
                                 :state="getValidationState(validationContext)"
                                 trim
@@ -111,7 +111,30 @@
                         </b-form-group>
                     </validation-provider>
 
-                    <!-- Country -->
+                    <!-- Password -->
+                    <validation-provider
+                        #default="validationContext"
+                        name="Password"
+                        rules="required"
+                    >
+                        <b-form-group
+                            label="Password"
+                            label-for="password"
+                        >
+                            <b-form-input
+                                id="password"
+                                type="password"
+                                v-model="userData.password"
+                                :state="getValidationState(validationContext)"
+                                trim
+                            />
+
+                            <b-form-invalid-feedback>
+                                {{ validationContext.errors[0] }}
+                            </b-form-invalid-feedback>
+                        </b-form-group>
+                    </validation-provider>
+
                     <!-- User Role -->
                     <validation-provider
                         #default="validationContext"
@@ -129,7 +152,6 @@
                                 :options="roleOptions"
                                 :reduce="val => val.value"
                                 :clearable="false"
-                                input-id="user-role"
                             />
                             <b-form-invalid-feedback :state="getValidationState(validationContext)">
                                 {{ validationContext.errors[0] }}
@@ -215,10 +237,11 @@ export default {
     },
     setup(props, {emit}) {
         const blankUserData = {
-            fullName: '',
-            username: '',
+            firstName: '',
+            lastName: '',
             email: '',
-            role: null,
+            password: '',
+            role: '',
         }
 
         const userData = ref(JSON.parse(JSON.stringify(blankUserData)))

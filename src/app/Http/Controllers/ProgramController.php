@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProgramRequest;
+use App\Http\Requests\UpdateProgramRequest;
 use App\Models\Program;
 use App\Repositories\ProgramRepository;
 use Illuminate\Http\Request;
@@ -22,8 +23,8 @@ class ProgramController extends Controller
         try {
             $this->authorize('create', Program::class);
             $data = $request->validated();
-            $this->programRepository->store($data);
-            return response(['message' => 'OK']);
+            $newProgram = $this->programRepository->store($data);
+            return response(['program_id' => $newProgram->id]);
         } catch (\Exception $exception) {
             return response($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
@@ -37,5 +38,27 @@ class ProgramController extends Controller
         } catch (\Exception $exception) {
             return \response($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
+    }
+
+    public function detail(int $id)
+    {
+        try {
+            return \response($this->programRepository->detail($id));
+        } catch (\Exception $exception) {
+            return \response($exception->getMessage(), Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function update(UpdateProgramRequest $request, int $id)
+    {
+        $data = $request->validated();
+        $this->programRepository->update($id, $data);
+        return \response(['message' => 'OK']);
+    }
+
+    public function delete(int $id)
+    {
+        $this->programRepository->delete($id);
+        return \response(['message' => 'OK']);
     }
 }

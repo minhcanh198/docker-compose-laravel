@@ -7,8 +7,8 @@
                 <b-avatar
                     ref="previewEl"
                     :src="userData.avatar"
-                    :text="avatarText(userData.fullName)"
-                    :variant="`light-${resolveUserRoleVariant(userData.role)}`"
+                    :text="avatarText(userData.firstname)"
+                    :variant="`light-${resolveUserRoleVariant(userData.roles[0].name)}`"
                     size="90px"
                     rounded
                 />
@@ -50,38 +50,6 @@
         <b-form>
             <b-row>
 
-                <!-- Field: Username -->
-                <b-col
-                    cols="12"
-                    md="4"
-                >
-                    <b-form-group
-                        label="Username"
-                        label-for="username"
-                    >
-                        <b-form-input
-                            id="username"
-                            v-model="userData.username"
-                        />
-                    </b-form-group>
-                </b-col>
-
-                <!-- Field: Full Name -->
-                <b-col
-                    cols="12"
-                    md="4"
-                >
-                    <b-form-group
-                        label="Name"
-                        label-for="full-name"
-                    >
-                        <b-form-input
-                            id="full-name"
-                            v-model="userData.fullName"
-                        />
-                    </b-form-group>
-                </b-col>
-
                 <!-- Field: Email -->
                 <b-col
                     cols="12"
@@ -94,63 +62,90 @@
                         <b-form-input
                             id="email"
                             v-model="userData.email"
-                            type="email"
                         />
                     </b-form-group>
                 </b-col>
 
-                <!-- Field: Status -->
+                <!-- Field: First Name -->
                 <b-col
                     cols="12"
                     md="4"
                 >
                     <b-form-group
-                        label="Status"
-                        label-for="user-status"
+                        label="Firstname"
+                        label-for="first-name"
                     >
-                        <v-select
-                            v-model="userData.status"
-                            :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                            :options="statusOptions"
-                            :reduce="val => val.value"
-                            :clearable="false"
-                            input-id="user-status"
+                        <b-form-input
+                            id="first-name"
+                            v-model="userData.firstname"
                         />
                     </b-form-group>
                 </b-col>
 
-                <!-- Field: Role -->
+                <!-- Field: Lastname -->
                 <b-col
                     cols="12"
                     md="4"
+                >
+                    <b-form-group
+                        label="Lastname"
+                        label-for="lastname"
+                    >
+                        <b-form-input
+                            id="lastname"
+                            v-model="userData.lastname"
+                        />
+                    </b-form-group>
+                </b-col>
+
+                <!--                &lt;!&ndash; Field: Password &ndash;&gt;-->
+                <!--                <b-col-->
+                <!--                    cols="12"-->
+                <!--                    md="4"-->
+                <!--                >-->
+                <!--                    <b-form-group-->
+                <!--                        label="New password"-->
+                <!--                        label-for="password"-->
+                <!--                    >-->
+                <!--                        <b-form-input-->
+                <!--                            id="password"-->
+                <!--                            v-model="userData.password"-->
+                <!--                            type="password"-->
+                <!--                        />-->
+                <!--                    </b-form-group>-->
+                <!--                </b-col>-->
+
+                <!-- Field: Role -->
+                <b-col
+                    cols="12"
+                    md="6"
                 >
                     <b-form-group
                         label="User Role"
                         label-for="user-role"
                     >
                         <v-select
-                            v-model="userData.role"
+                            v-model="userData.roles[0].name"
                             :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                             :options="roleOptions"
                             :reduce="val => val.value"
                             :clearable="false"
-                            input-id="user-role"
                         />
                     </b-form-group>
                 </b-col>
 
-                <!-- Field: Email -->
+                <!-- Field: Phone -->
                 <b-col
                     cols="12"
-                    md="4"
+                    md="6"
                 >
                     <b-form-group
-                        label="Company"
-                        label-for="company"
+                        label="Phone"
+                        label-for="phone"
                     >
                         <b-form-input
-                            id="company"
-                            v-model="userData.company"
+                            id="phone"
+                            v-model="userData.phone_number"
                         />
                     </b-form-group>
                 </b-col>
@@ -192,6 +187,7 @@
             variant="primary"
             class="mb-1 mb-sm-0 mr-0 mr-sm-1"
             :block="$store.getters['app/currentBreakPoint'] === 'xs'"
+            @click="updateUser"
         >
             Save Changes
         </b-button>
@@ -224,8 +220,11 @@ import {
 import {avatarText} from '@core/utils/filter'
 import vSelect from 'vue-select'
 import {useInputImageRenderer} from '@core/comp-functions/forms/form-utils'
-import {ref} from '@vue/composition-api'
+import {onUnmounted, ref} from '@vue/composition-api'
 import useUsersList from '../users-list/useUsersList'
+import ToastificationContent from "../../../../@core/components/toastification/ToastificationContent";
+import store from '@/store'
+import userStoreModule from "../userStoreModule";
 
 export default {
     components: {
@@ -250,58 +249,75 @@ export default {
             required: true,
         },
     },
+
+    methods: {
+        updateUser() {
+            store.dispatch('app-user/updateUser', this.userData)
+                .then(response => {
+                    this.$toast({
+                        component: ToastificationContent,
+                        position: 'top-right',
+                        props: {
+                            title: `Update user successfully`,
+                            icon: 'CoffeeIcon',
+                            variant: 'success',
+                            text: '',
+                        },
+                    })
+                })
+                .catch(error => {
+                    this.$toast({
+                        component: ToastificationContent,
+                        position: 'top-right',
+                        props: {
+                            title: `Somthing went wrong`,
+                            icon: 'CoffeeIcon',
+                            variant: 'danger',
+                            text: '',
+                        },
+                    })
+                })
+        }
+    },
+
     setup(props) {
         const {resolveUserRoleVariant} = useUsersList()
 
         const roleOptions = [
-            {label: 'Admin', value: 'admin'},
-            {label: 'Author', value: 'author'},
-            {label: 'Editor', value: 'editor'},
-            {label: 'Maintainer', value: 'maintainer'},
-            {label: 'Subscriber', value: 'subscriber'},
-        ]
+            {label: 'Super admin', value: 'superadmin'},
+            {label: 'Provider', value: 'provider'},
+            {label: 'Manager', value: 'manager'},
 
-        const statusOptions = [
-            {label: 'Pending', value: 'pending'},
-            {label: 'Active', value: 'active'},
-            {label: 'Inactive', value: 'inactive'},
         ]
 
         const permissionsData = [
             {
-                module: 'Admin',
+                module: 'Users',
                 read: true,
                 write: false,
                 create: false,
                 delete: false,
             },
             {
-                module: 'Staff',
+                module: 'Leads',
                 read: false,
                 write: true,
                 create: false,
                 delete: false,
             },
             {
-                module: 'Author',
+                module: 'Agencies',
                 read: true,
                 write: false,
                 create: true,
                 delete: false,
             },
             {
-                module: 'Contributor',
+                module: 'Programs',
                 read: false,
                 write: false,
                 create: false,
                 delete: false,
-            },
-            {
-                module: 'User',
-                read: false,
-                write: false,
-                create: false,
-                delete: true,
             },
         ]
 
@@ -318,7 +334,6 @@ export default {
             resolveUserRoleVariant,
             avatarText,
             roleOptions,
-            statusOptions,
             permissionsData,
 
             //  ? Demo - Update Image on click of update button
@@ -326,6 +341,15 @@ export default {
             previewEl,
             inputImageRenderer,
         }
+        const USER_APP_STORE_MODULE_NAME = 'app-user'
+
+        // Register module
+        if (!store.hasModule(USER_APP_STORE_MODULE_NAME)) store.registerModule(USER_APP_STORE_MODULE_NAME, userStoreModule)
+
+        // UnRegister on leave
+        onUnmounted(() => {
+            if (store.hasModule(USER_APP_STORE_MODULE_NAME)) store.unregisterModule(USER_APP_STORE_MODULE_NAME)
+        })
     },
 }
 </script>

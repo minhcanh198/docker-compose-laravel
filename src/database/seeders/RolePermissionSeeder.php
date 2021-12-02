@@ -15,9 +15,9 @@ class RolePermissionSeeder extends Seeder
      */
     public function run()
     {
-        $superAdmin = Role::firstOrCreate(['name' => 'superadmin'], ['name' => 'superadmin']);
-        $provider = Role::firstOrCreate(['name' => 'provider'], ['name' => 'provider']);
-        $manager = Role::firstOrCreate(['name' => 'manager'], ['name' => 'manager']);
+        $superAdmin = Role::firstOrCreate(['name' => 'superadmin'], ['name' => 'superadmin', 'guard_name' => 'api']);
+        $provider = Role::firstOrCreate(['name' => 'provider'], ['name' => 'provider', 'guard_name' => 'api']);
+        $manager = Role::firstOrCreate(['name' => 'manager'], ['name' => 'manager', 'guard_name' => 'api']);
 
         $viewProgram = Permission::firstOrCreate(['name' => 'program_view'], ['name' => 'program_view']);
         $editProgram = Permission::firstOrCreate(['name' => 'program_edit'], ['name' => 'program_edit']);

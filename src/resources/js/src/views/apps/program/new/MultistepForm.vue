@@ -7,7 +7,7 @@
             finish-button-text="Submit"
             back-button-text="Previous"
             class="steps-transparent mb-3"
-            @on-complete="formSubmitted"
+            @on-complete="submitForm"
         >
             <!-- Setting detail tab -->
             <tab-content
@@ -33,6 +33,7 @@
                             <b-form-input
                                 id="i-title"
                                 placeholder="Volunteer"
+                                v-model="form.title"
                             />
                         </b-form-group>
                     </b-col>
@@ -45,7 +46,7 @@
                                 id="i-country"
                                 v-model="selectedCountry"
                                 :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                                :options="countryName"
+                                :options="countries"
                                 :selectable="option => ! option.value.includes('select_value')"
                                 label="text"
                             />
@@ -58,9 +59,9 @@
                         >
                             <v-select
                                 id="i-category"
-                                v-model="selectedCountry"
+                                v-model="selectedCategory"
                                 :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                                :options="countryName"
+                                :options="categories"
                                 :selectable="option => ! option.value.includes('select_value')"
                                 label="text"
                             />
@@ -74,9 +75,9 @@
                         >
                             <v-select
                                 id="i-focus"
-                                v-model="selectedCountry"
+                                v-model="selectedFocus"
                                 :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                                :options="countryName"
+                                :options="focuses"
                                 :selectable="option => ! option.value.includes('select_value')"
                                 label="text"
                             />
@@ -90,6 +91,7 @@
                             <b-form-input
                                 id="i-age"
                                 placeholder="30"
+                                v-model="form.age"
                             />
                         </b-form-group>
                     </b-col>
@@ -101,6 +103,7 @@
                             <b-form-input
                                 id="i-duration"
                                 placeholder="20"
+                                v-model="form.duration"
                             />
                         </b-form-group>
                     </b-col>
@@ -112,6 +115,7 @@
                             <b-form-input
                                 id="i-price"
                                 placeholder="5000"
+                                v-model="form.price"
                             />
                         </b-form-group>
                     </b-col>
@@ -427,6 +431,7 @@
 import {FormWizard, TabContent} from 'vue-form-wizard'
 import BCardCode from "../../../../@core/components/b-card-code/BCardCode";
 import vSelect from 'vue-select'
+import store from '@/store/index'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 import {
@@ -441,6 +446,9 @@ import {
 } from 'bootstrap-vue'
 import IncludedServiceRepeater from "./IncludedServiceRepeater";
 import OptionalServiceRepeater from "./OptionalServiceRepeater";
+import programStoreModule from "../programStoreModule";
+import {onUnmounted} from "@vue/composition-api";
+import useJwt from "../../../../auth/jwt/useJwt";
 
 export default {
     components: {
@@ -461,9 +469,14 @@ export default {
         // eslint-disable-next-line vue/no-unused-components
         ToastificationContent,
     },
+
     data() {
         return {
             form: {
+                title: '',
+                age: '',
+                duration: '',
+                price: '',
                 priceInfo: '',
                 description: '',
                 accommodation: '',
@@ -484,40 +497,127 @@ export default {
                 goodToKnow: 800,
             },
             selectedCountry: null,
-            selectedLanguage: 'nothing_selected',
-            countryName: [
-                {value: 'select_value', text: 'Select Value'},
-                {value: 'Russia', text: 'Russia'},
-                {value: 'Canada', text: 'Canada'},
-                {value: 'China', text: 'China'},
-                {value: 'United States', text: 'United States'},
-                {value: 'Brazil', text: 'Brazil'},
-                {value: 'Australia', text: 'Australia'},
-                {value: 'India', text: 'India'},
+            countries: [
+                {value: 'select_value', text: 'Select Country'},
             ],
-            languageName: [
-                {value: 'nothing_selected', text: 'Nothing Selected'},
-                {value: 'English', text: 'English'},
-                {value: 'Chinese', text: 'Mandarin Chinese'},
-                {value: 'Hindi', text: 'Hindi'},
-                {value: 'Spanish', text: 'Spanish'},
-                {value: 'Arabic', text: 'Arabic'},
-                {value: 'Malay', text: 'Malay'},
-                {value: 'Russian', text: 'Russian'},
+            categories: [
+                {value: 'select_value', text: 'Select Category'},
             ],
+            selectedCategory: null,
+            focuses: [
+                {value: 'select_value', text: 'Select Focus'},
+            ],
+            selectedFocus: null,
+        }
+    },
+    created() {
+        this.$store.dispatch('app-program/fetchCountries')
+            .then(res => {
+                res.data.forEach(({id, name}) => {
+                    this.countries.push({value: id.toString(), text: name})
+                })
+                this.selectedCountry = {text: 'United States', value: "1"}
+            })
+            .catch(err => {
+                this.$toast({
+                    component: ToastificationContent,
+                    props: {
+                        title: "Get countries err",
+                        variant: 'danger',
+                        icon: 'FrownIcon'
+                    },
+                })
+            })
+        this.$store.dispatch('app-program/fetchCategories')
+            .then(res => {
+                res.data.forEach(({id, name}, index) => {
+                    const option = {text: name, value: id.toString()}
+                    if (index === 0) {
+                        this.selectedCategory = option
+                    }
+                    this.categories.push(option)
+                })
+            })
+            .catch(err => {
+                this.$toast({
+                    component: ToastificationContent,
+                    props: {
+                        title: "Get countries err",
+                        variant: 'danger',
+                        icon: 'FrownIcon'
+                    },
+                })
+            })
+
+    },
+    watch: {
+        selectedCategory(newValue) {
+            this.fetchFocuses(newValue.value)
         }
     },
     methods: {
-        formSubmitted() {
-            this.$toast({
-                component: ToastificationContent,
-                props: {
-                    title: 'Form Submitted',
-                    icon: 'EditIcon',
-                    variant: 'success',
-                },
-            })
+        fetchFocuses(catID) {
+            this.$store.dispatch('app-program/fetchFocuses', catID)
+                .then(res => {
+                    res.data.forEach(({id, name}, index) => {
+                        const option = {text: name, value: id.toString()}
+                        this.focuses.push(option)
+                        if (index === 0) {
+                            this.selectedFocus = option
+                        }
+                    })
+                })
+                .catch(err => {
+                    this.$toast({
+                        component: ToastificationContent,
+                        props: {
+                            title: "Get countries err",
+                            variant: 'danger',
+                            icon: 'FrownIcon'
+                        },
+                    })
+                })
         },
+        submitForm() {
+            const payload = {
+                title: this.form.title,
+                countryId: this.selectedCountry.value,
+                categoryId: this.selectedCategory.value,
+                focusId: this.selectedFocus.value,
+                age: this.form.age,
+                duration: this.form.duration,
+                price: this.form.price,
+                description: this.form.description,
+                accommodation: this.form.accommodation,
+                location: this.form.location,
+                providerId: JSON.parse(localStorage.getItem('userData')).id
+            }
+            this.$store.dispatch('app-program/addProgram', payload)
+                .then(res => {
+                    this.$toast({
+                        component: ToastificationContent,
+                        props: {
+                            title: 'New program was added',
+                            icon: 'EditIcon',
+                            variant: 'success',
+                        },
+                    })
+                })
+                .catch(err => {
+
+                })
+        }
     },
+    setup() {
+        const PROGRAM_STORE_MODULE_NAME = 'app-program'
+
+        // Register module
+        if (!store.hasModule(PROGRAM_STORE_MODULE_NAME)) store.registerModule(PROGRAM_STORE_MODULE_NAME, programStoreModule)
+
+        // UnRegister on leave
+        onUnmounted(() => {
+            if (store.hasModule(PROGRAM_STORE_MODULE_NAME)) store.unregisterModule(PROGRAM_STORE_MODULE_NAME)
+        })
+    }
 }
 </script>

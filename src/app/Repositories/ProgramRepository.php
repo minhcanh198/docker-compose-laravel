@@ -14,7 +14,8 @@ class ProgramRepository
 
     public function store(array $data)
     {
-        Program::create($data);
+        $data['status'] = 'NEW';
+        return Program::create($data);
     }
 
     public function getAll(array $params): LengthAwarePaginator
@@ -24,5 +25,25 @@ class ProgramRepository
             ->with(self::countryRelationFields)
             ->with(self::providerRelationFields)
             ->paginate($params['per_page']);
+    }
+
+    public function detail(int $id)
+    {
+        return Program::with(self::categoryRelationFields)
+            ->with(self::focusRelationFields)
+            ->with(self::countryRelationFields)
+            ->with(self::providerRelationFields)
+            ->findOrFail($id);
+    }
+
+    public function update(int $id, array $data)
+    {
+        Program::where('id', $id)
+            ->update($data);
+    }
+
+    public function delete(int $id)
+    {
+        Program::where('id', $id)->delete();
     }
 }

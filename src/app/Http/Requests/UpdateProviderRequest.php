@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class CreateUserRequest extends FormRequest
+class UpdateProviderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +24,14 @@ class CreateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstname' => ['required'],
-            'lastname' => ['required'],
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z@$!%*?&]{8,}$/'],
-            'role' => ['required', Rule::in(['provider', 'superadmin', 'manager'])]
+            'name' => ['required'],
+            'brand_name' => [],
+            'website' => [],
+            'street' => ['required'],
+            'city' => ['required'],
+            'zip_code' => ['required'],
+            'country_id' => ['required'],
+            'vat_number' => [],
         ];
     }
 }

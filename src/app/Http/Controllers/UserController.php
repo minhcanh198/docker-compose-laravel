@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -29,11 +31,15 @@ class UserController extends Controller
             return response("unauthorized", Response::HTTP_UNAUTHORIZED);
         }
         $validatedData = $request->validated();
-        $validatedData['password'] = Hash::make($validatedData['password']);
-        $user = $this->user->create($validatedData);
-        $accessToken = $user->createToken('authToken')->accessToken;
+        $user = $this->user->create([
+            'firstname' => $validatedData['firstname'],
+            'lastname' => $validatedData['lastname'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password'])
+        ]);
+        $user->assignRole($validatedData['role']);
 
-        return response(['user' => $user, 'access_token' => $accessToken]);
+        return response(['user' => $user]);
     }
 
     public function aboutMe()
@@ -51,7 +57,7 @@ class UserController extends Controller
         if ($user->cannot('viewAny', User::class)) {
             return response("unauthorized", Response::HTTP_UNAUTHORIZED);
         }
-        $users = $this->user->with('roles:id,name')->paginate(10);
+        $users = $this->user->with('roles:id,name')->paginate(self::usersPerPage);
         return \response($users);
     }
 
@@ -59,7 +65,7 @@ class UserController extends Controller
     {
         try {
             $authUser = $this->auth::user();
-            $user = $this->user->findOrFail($id);
+            $user = $this->user->with('roles:id,name')->findOrFail($id);
             if ($authUser->cannot('view', $user)) {
                 return response("unauthorized", Response::HTTP_UNAUTHORIZED);
             }
@@ -67,5 +73,18 @@ class UserController extends Controller
         } catch (\Exception $exception) {
             return \response($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function update(UpdateUserRequest $request, int $id)
+    {
+        $data = $request->validated();
+        $user = User::where('id', $id);
+        $user->update([
+            'firstname' => $data['firstname'],
+            'lastname' => $data['lastname'],
+            'phone_number' => $data['phone_number'],
+        ]);
+        $user->first()->syncRoles($data['role']);
+        return \response(['message' => 'OK']);
     }
 }

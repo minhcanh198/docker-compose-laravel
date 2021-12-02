@@ -25,7 +25,9 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::post('/send-reset-link-email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 
 Route::group(['middleware' => ['auth:api']], function () {
+    // USER
     Route::post('/user', [UserController::class, 'addUser']);
+    Route::post('/user/{id}', [UserController::class, 'update']);
     Route::get('/users', [UserController::class, 'getAllUsers']);
     Route::get('/user/{id}', [UserController::class, 'getUserByID']);
     Route::get('/me', [UserController::class, 'aboutMe']);
@@ -34,14 +36,20 @@ Route::group(['middleware' => ['auth:api']], function () {
     //Provider
     Route::get('/providers', [ProviderController::class, 'getAll']);
     Route::post('/provider', [ProviderController::class, 'createNew']);
+    Route::post('/provider/{id}', [ProviderController::class, 'update']);
+    Route::get('/provider/{id}', [ProviderController::class, 'detail']);
+    Route::delete('/provider/{id}', [ProviderController::class, 'delete']);
 
     //Lead
     Route::get('/leads', [LeadController::class, 'getAll']);
     Route::post('/lead', [LeadController::class, 'createNew']);
 
     //Program
-    Route::get('/programs', [ProgramController::class, 'getAll']);
     Route::post('/program', [ProgramController::class, 'createNew']);
+    Route::post('/program/{id}', [ProgramController::class, 'update']);
+    Route::get('/programs', [ProgramController::class, 'getAll']);
+    Route::get('/program/{id}', [ProgramController::class, 'detail']);
+    Route::delete('/program/{id}', [ProgramController::class, 'delete']);
 
 });
 

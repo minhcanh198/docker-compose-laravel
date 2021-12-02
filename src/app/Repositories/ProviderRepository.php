@@ -18,4 +18,20 @@ class ProviderRepository
     {
         Provider::create($data);
     }
+
+    public function update(int $id, array $data)
+    {
+        Provider::where('id', $id)
+            ->update($data);
+    }
+
+    public function detail(int $id)
+    {
+        return Provider::findOrFail($id);
+    }
+
+    public function delete(int $id)
+    {
+        Provider::where('id', $id)->delete();
+    }
 }

@@ -1,13 +1,10 @@
 <template>
-
     <div>
-
         <user-list-add-new
             :is-add-new-user-sidebar-active.sync="isAddNewUserSidebarActive"
             :role-options="roleOptions"
             @refetch-data="refetchData"
         />
-
         <!-- Filters -->
         <users-list-filters
             :role-filter.sync="roleFilter"
@@ -15,7 +12,6 @@
             :role-options="roleOptions"
             :status-options="statusOptions"
         />
-
         <!-- Table Container Card -->
         <b-card
             no-body
@@ -106,12 +102,14 @@
                 <template #cell(role)="data">
                     <div class="text-nowrap">
                         <feather-icon
-                            :icon="resolveUserRoleIcon(data.item.role)"
+                            v-if="data.item.roles[0]"
+                            :icon="resolveUserRoleIcon(data.item.roles[0].name)"
                             size="18"
                             class="mr-50"
-                            :class="`text-${resolveUserRoleVariant(data.item.role)}`"
+                            :class="`text-${resolveUserRoleVariant(data.item.roles[0].name)}`"
                         />
-                        <span class="align-text-top text-capitalize">{{ data.item.roles[0].name }}</span>
+                        <span class="align-text-top text-capitalize"
+                              v-if="data.item.roles[0]">{{ data.item.roles[0].name }}</span>
                     </div>
                 </template>
 
@@ -270,7 +268,7 @@ export default {
         const roleOptions = [
             {label: 'Admin', value: 'superadmin'},
             {label: 'Provider', value: 'provider'},
-            {label: 'Manager>', value: 'manager'},
+            {label: 'Manager', value: 'manager'},
         ]
 
 
