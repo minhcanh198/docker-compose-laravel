@@ -31,4 +31,9 @@ class Program extends Model
     {
         return $this->belongsTo(Provider::class);
     }
+
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:m:s',
+        'updated_at' => 'datetime:Y-m-d H:m:s',
+    ];
 }

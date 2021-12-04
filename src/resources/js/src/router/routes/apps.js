@@ -243,7 +243,7 @@ export default [
     {
         path: '/program/:id/view',
         name: 'program-view',
-        component: () => import('@/views/apps/program/new/New.vue'),
+        component: () => import('@/views/apps/program/view/ProgramView.vue'),
     },
 
     {

@@ -17,7 +17,7 @@ export default {
         fetchProgram(ctx, {id}) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(`/api/lead/${id}`)
+                    .get(`/api/program/${id}`)
                     .then(response => resolve(response))
                     .catch(error => reject(error))
             })
