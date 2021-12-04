@@ -9,6 +9,8 @@ use Illuminate\Support\LazyCollection;
 
 class ProviderRepository
 {
+    private const countryRelationField = 'country:id,name';
+
     public function getAll(int $rowPerPage = 10): LengthAwarePaginator
     {
         return Provider::paginate($rowPerPage);
@@ -27,7 +29,7 @@ class ProviderRepository
 
     public function detail(int $id)
     {
-        return Provider::findOrFail($id);
+        return Provider::with(self::countryRelationField)->findOrFail($id);
     }
 
     public function delete(int $id)

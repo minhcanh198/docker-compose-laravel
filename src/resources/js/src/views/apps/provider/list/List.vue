@@ -71,6 +71,17 @@
                               </template>
                               <b-dropdown-item>
                                 <feather-icon
+                                    icon="FileTextIcon"
+                                    class="mr-50"
+                                />
+                                <b-link
+                                    :to="{ name: 'provider-view', params: { id: props.row.id } }"
+                                >
+                                   <span>View</span>
+                                </b-link>
+                              </b-dropdown-item>
+                              <b-dropdown-item>
+                                <feather-icon
                                     icon="Edit2Icon"
                                     class="mr-50"
                                 />
@@ -151,7 +162,7 @@
 
 <script>
 import {
-    BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect, BDropdownItem, BDropdown, BCard,
+    BAvatar, BBadge, BPagination, BFormGroup, BFormInput, BFormSelect, BDropdownItem, BDropdown, BCard, BLink,
 } from 'bootstrap-vue'
 import {VueGoodTable} from 'vue-good-table'
 import ProviderListFilter from "./ProviderListFilter";
@@ -172,6 +183,7 @@ export default {
         BDropdownItem,
         BDropdown,
         BCard,
+        BLink,
     },
     data() {
         return {

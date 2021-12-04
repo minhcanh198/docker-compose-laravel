@@ -17,7 +17,7 @@ export default {
         fetchProvider(ctx, {id}) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(`/api/lead/${id}`)
+                    .get(`/api/provider/${id}`)
                     .then(response => resolve(response))
                     .catch(error => reject(error))
             })

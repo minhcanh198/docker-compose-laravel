@@ -241,6 +241,18 @@ export default [
     },
 
     {
+        path: '/program/:id/view',
+        name: 'program-view',
+        component: () => import('@/views/apps/program/new/New.vue'),
+    },
+
+    {
+        path: '/program/:id/edit',
+        name: 'program-edit',
+        component: () => import('@/views/apps/program/new/New.vue'),
+    },
+
+    {
         path: '/programs',
         name: 'list-program',
         component: () => import('@/views/apps/program/list/List.vue'),
@@ -276,6 +288,19 @@ export default [
             ],
         },
     },
+
+    {
+        path: '/lead/:id/view',
+        name: 'lead-view',
+        component: () => import('@/views/apps/lead/list/List.vue'),
+    },
+
+    // {
+    //     path: '/lead/:id/edit',
+    //     name: 'lead-edit',
+    //     component: () => import('@/views/apps/lead/list/List.vue'),
+    // },
+
     // PROVIDERS
     {
         path: '/providers',
@@ -294,4 +319,15 @@ export default [
         },
     },
 
+    {
+        path: '/provider/:id/view',
+        name: 'provider-view',
+        component: () => import('@/views/apps/provider/view/ProviderView.vue'),
+    },
+
+    {
+        path: '/provider/:id/edit',
+        name: 'provider-edit',
+        component: () => import('@/views/apps/provider/list/List.vue'),
+    },
 ]
