@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -15,13 +17,22 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     private User $user;
+
+
     private Auth $auth;
+
+
     const usersPerPage = 10;
 
-    public function __construct(User $user, Auth $auth)
+
+    private UserRepository $repository;
+
+
+    public function __construct(User $user, Auth $auth, UserRepository $repository)
     {
         $this->user = $user;
         $this->auth = $auth;
+        $this->repository = $repository;
     }
 
     public function addUser(CreateUserRequest $request)
@@ -51,13 +62,14 @@ class UserController extends Controller
         return response($user);
     }
 
-    public function getAllUsers()
+    public function getAllUsers(Request $request)
     {
+        $query = $request->all();
         $user = $this->auth::user();
         if ($user->cannot('viewAny', User::class)) {
             return response("unauthorized", Response::HTTP_UNAUTHORIZED);
         }
-        $users = $this->user->with('roles:id,name')->paginate(self::usersPerPage);
+        $users = $this->repository->getAll($query);
         return \response($users);
     }
 

@@ -19,7 +19,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="StarIcon"
+                                    icon="FlagIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Country</span>
@@ -31,7 +31,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="StarIcon"
+                                    icon="ZapIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Category</span>
@@ -44,7 +44,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="LayoutIcon"
+                                    icon="ZapIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Focus</span>
@@ -56,7 +56,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="MailIcon"
+                                    icon="StarIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Program Name</span>
@@ -68,7 +68,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="MapPinIcon"
+                                    icon="CheckIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Status</span>
@@ -86,7 +86,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="StarIcon"
+                                    icon="MapPinIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Accommodation</span>
@@ -110,7 +110,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="StarIcon"
+                                    icon="CalendarIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Created At</span>
@@ -123,7 +123,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="LayoutIcon"
+                                    icon="AlignLeftIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Description</span>
@@ -135,7 +135,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="MailIcon"
+                                    icon="StarIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Duration</span>
@@ -147,7 +147,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="MapPinIcon"
+                                    icon="StarIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Expectation</span>
@@ -171,7 +171,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="MapIcon"
+                                    icon="CommandIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Included Services</span>
@@ -195,7 +195,7 @@
                         <tr>
                             <th class="pb-50">
                                 <feather-icon
-                                    icon="StarIcon"
+                                    icon="CommandIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Optional Services</span>
@@ -207,7 +207,7 @@
                         <tr>
                             <th class="pb-50 pt-50">
                                 <feather-icon
-                                    icon="CalendarIcon"
+                                    icon="ActivityIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Orientaion</span>
@@ -219,7 +219,7 @@
                         <tr>
                             <th class="pb-50 pt-50">
                                 <feather-icon
-                                    icon="CalendarIcon"
+                                    icon="DollarSignIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Price</span>
@@ -231,7 +231,7 @@
                         <tr>
                             <th class="pb-50 pt-50">
                                 <feather-icon
-                                    icon="CalendarIcon"
+                                    icon="AlignLeftIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Price Info</span>
@@ -243,7 +243,7 @@
                         <tr>
                             <th class="pb-50 pt-50">
                                 <feather-icon
-                                    icon="CalendarIcon"
+                                    icon="StarIcon"
                                     class="mr-75"
                                 />
                                 <span class="font-weight-bold">Tags</span>

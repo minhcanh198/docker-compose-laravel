@@ -56,7 +56,7 @@ export default function useUsersList() {
                 page: currentPage.value,
                 // sortBy: sortBy.value,
                 // sortDesc: isSortDirDesc.value,
-                // role: roleFilter.value,
+                role: roleFilter.value,
                 // status: statusFilter.value,
             })
             .then(response => {
