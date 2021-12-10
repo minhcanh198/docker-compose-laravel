@@ -1,6 +1,12 @@
 <template>
     <div>
-        <!--        <lead-list-filter></lead-list-filter>-->
+        <lead-list-filter
+            :category-options="[]"
+            :provider-options="[]"
+            :country-options="countryOptions"
+            :country-filter.sync="countryFilter"
+            :date-filter.sync="dateFilter"
+        ></lead-list-filter>
         <b-card title="All leads">
             <!-- search input -->
             <div class="custom-search d-flex justify-content-end">
@@ -274,6 +280,9 @@ export default {
                 {
                     1: 'light-primary', 2: 'light-success', 3: 'light-danger', 4: 'light-warning', 5: 'light-info',
                 }],
+            countryOptions: [],
+            countryFilter: "",
+            dateFilter: "",
         }
     },
     computed: {
@@ -303,6 +312,7 @@ export default {
     },
     created() {
         this.fetchLeads()
+        this.fetchCountry()
     },
     methods: {
         formatCreatedAtDate(dateTime) {
@@ -354,6 +364,18 @@ export default {
                 .then(res => {
                     this.rows = res.data.data
                     this.total = res.data.total
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+
+        fetchCountry() {
+            this.$store.dispatch('app-lead/fetchCountries')
+                .then(res => {
+                    res.data.forEach(({id, name}) => {
+                        this.countryOptions.push({label: name, value: id})
+                    })
                 })
                 .catch(err => {
                     console.log(err)

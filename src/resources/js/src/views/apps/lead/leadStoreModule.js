@@ -30,5 +30,13 @@ export default {
                     .catch(error => reject(error))
             })
         },
+        fetchCountries(ctx, userData) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get('/api/countries')
+                    .then(response => resolve(response))
+                    .catch(error => reject(error))
+            })
+        },
     },
 }
