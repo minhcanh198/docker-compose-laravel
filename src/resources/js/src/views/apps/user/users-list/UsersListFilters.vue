@@ -23,21 +23,21 @@
                     />
                 </b-col>
 
-                <b-col
-                    cols="12"
-                    md="4"
-                    class="mb-md-0 mb-2"
-                >
-                    <label>Status</label>
-                    <v-select
-                        :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                        :value="statusFilter"
-                        :options="statusOptions"
-                        class="w-100"
-                        :reduce="val => val.value"
-                        @input="(val) => $emit('update:statusFilter', val)"
-                    />
-                </b-col>
+<!--                <b-col-->
+<!--                    cols="12"-->
+<!--                    md="4"-->
+<!--                    class="mb-md-0 mb-2"-->
+<!--                >-->
+<!--                    <label>Status</label>-->
+<!--                    <v-select-->
+<!--                        :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"-->
+<!--                        :value="statusFilter"-->
+<!--                        :options="statusOptions"-->
+<!--                        class="w-100"-->
+<!--                        :reduce="val => val.value"-->
+<!--                        @input="(val) => $emit('update:statusFilter', val)"-->
+<!--                    />-->
+<!--                </b-col>-->
             </b-row>
         </b-card-body>
     </b-card>

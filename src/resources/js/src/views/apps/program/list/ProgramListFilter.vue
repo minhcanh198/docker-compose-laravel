@@ -12,14 +12,14 @@
                     md="4"
                     class="mb-md-0 mb-2"
                 >
-                    <label>Role</label>
+                    <label>Country</label>
                     <v-select
                         :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                        :value="roleFilter"
-                        :options="roleOptions"
+                        :value="countryFilter"
+                        :options="countryOptions"
                         class="w-100"
                         :reduce="val => val.value"
-                        @input="(val) => $emit('update:roleFilter', val)"
+                        @input="(val) => $emit('update:countryFilter', val)"
                     />
                 </b-col>
                 <b-col
@@ -27,14 +27,14 @@
                     md="4"
                     class="mb-md-0 mb-2"
                 >
-                    <label>Plan</label>
+                    <label>Category</label>
                     <v-select
                         :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                        :value="planFilter"
-                        :options="planOptions"
+                        :value="categoryFilter"
+                        :options="categoryOptions"
                         class="w-100"
                         :reduce="val => val.value"
-                        @input="(val) => $emit('update:planFilter', val)"
+                        @input="(val) => $emit('update:categoryFilter', val)"
                     />
                 </b-col>
                 <b-col
@@ -60,6 +60,7 @@
 <script>
 import {BCard, BCardHeader, BCardBody, BRow, BCol} from 'bootstrap-vue'
 import vSelect from 'vue-select'
+import flatPickr from 'vue-flatpickr-component'
 
 export default {
     components: {
@@ -69,29 +70,30 @@ export default {
         BCardHeader,
         BCardBody,
         vSelect,
+        flatPickr,
     },
     props: {
-        roleFilter: {
-            type: [String, null],
-            default: null,
-        },
-        planFilter: {
-            type: [String, null],
-            default: null,
-        },
         statusFilter: {
             type: [String, null],
             default: null,
         },
-        roleOptions: {
-            type: Array,
-            required: true,
+        countryFilter: {
+            type: [Number, null],
+            default: null,
         },
-        planOptions: {
-            type: Array,
-            required: true,
+        categoryFilter: {
+            type: [Number, null],
+            default: null,
         },
         statusOptions: {
+            type: Array,
+            required: true,
+        },
+        countryOptions: {
+            type: Array,
+            required: true,
+        },
+        categoryOptions: {
             type: Array,
             required: true,
         },
@@ -101,4 +103,5 @@ export default {
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+@import '~@core/scss/vue/libs/vue-flatpicker.scss';
 </style>

@@ -1,6 +1,13 @@
 <template>
     <div>
-        <!--        <program-list-filter></program-list-filter>-->
+        <program-list-filter
+            :category-options="categoryOptions"
+            :category-filter.sync="categoryFilter"
+            :status-options="statusOptions"
+            :status-filter.sync="statusFilter"
+            :country-options="countryOptions"
+            :country-filter.sync="countryFilter"
+        ></program-list-filter>
         <b-card title="All programs">
             <!-- search input -->
             <div class="custom-search d-flex justify-content-end">
@@ -24,6 +31,7 @@
                 :columns="columns"
                 :rows="rows"
                 :rtl="direction"
+                :isLoading.sync="isLoading"
                 :search-options="{
         enabled: true,
         externalQuery: searchTerm
@@ -226,6 +234,7 @@ export default {
     },
     data() {
         return {
+            isLoading: false,
             log: [],
             pageLength: 5,
             total: 0,
@@ -267,6 +276,12 @@ export default {
             ],
             rows: [],
             searchTerm: '',
+            categoryOptions: [],
+            categoryFilter: null,
+            countryOptions: [],
+            countryFilter: null,
+            statusFilter: null,
+            statusOptions: [],
         }
     },
     computed: {
@@ -296,6 +311,20 @@ export default {
     },
     created() {
         this.fetchPrograms()
+        this.fetchCountries()
+        this.fetchCategories()
+        this.fetchStatuses()
+    },
+    watch: {
+        categoryFilter() {
+            this.fetchPrograms()
+        },
+        statusFilter() {
+            this.fetchPrograms()
+        },
+        countryFilter() {
+            this.fetchPrograms()
+        }
     },
     methods: {
         formatProgramID(id) {
@@ -326,20 +355,54 @@ export default {
             this.log.push(`the user ordered:  ${params[0].type}`)
         },
         fetchPrograms() {
+            this.isLoading = true
             this.$store.dispatch('app-program/fetchPrograms', {
                 'per_page': this.pageLength,
                 'search': this.searchTerm,
-                'page': this.currentPage
+                'page': this.currentPage,
+                'category': this.categoryFilter,
+                'status': this.statusFilter,
+                'country': this.countryFilter,
             })
                 .then(res => {
+                    this.isLoading = false
                     this.rows = res.data.data
                     this.total = res.data.total
                 })
                 .catch(err => {
+                    this.isLoading = false
                     console.log(err)
                 })
-        }
-
+        },
+        fetchCountries() {
+            this.$store.dispatch('app-program/fetchCountries')
+                .then(res => {
+                    res.data.forEach(({id, name}) => {
+                        this.countryOptions.push({label: name, value: id})
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        fetchCategories() {
+            this.$store.dispatch('app-program/fetchCategories')
+                .then(res => {
+                    res.data.forEach(({id, name}) => {
+                        this.categoryOptions.push({label: name, value: id})
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        fetchStatuses() {
+            this.statusOptions.push({label: 'NEW', value: 'NEW'})
+            this.statusOptions.push({label: 'PENDING', value: 'PENDING'})
+            this.statusOptions.push({label: 'LIVE', value: 'LIVE'})
+            this.statusOptions.push({label: 'UPDATED', value: 'UPDATED'})
+            this.statusOptions.push({label: 'INACTIVE', value: 'INACTIVE'})
+        },
     },
     setup() {
         const PROGRAM_STORE_MODULE_NAME = 'app-program'

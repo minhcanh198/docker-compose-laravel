@@ -20,11 +20,20 @@ class ProgramRepository
 
     public function getAll(array $params): LengthAwarePaginator
     {
-        return Program::with(self::categoryRelationFields)
+        $sql = Program::with(self::categoryRelationFields)
             ->with(self::focusRelationFields)
             ->with(self::countryRelationFields)
-            ->with(self::providerRelationFields)
-            ->paginate($params['per_page']);
+            ->with(self::providerRelationFields);
+        if (isset($params['category'])) {
+            $sql->where('category_id', $params['category']);
+        }
+        if (isset($params['country'])) {
+            $sql->where('country_id', $params['country']);
+        }
+        if (isset($params['status'])) {
+            $sql->where('status', $params['status']);
+        }
+        return $sql->paginate($params['per_page']);
     }
 
     public function detail(int $id)

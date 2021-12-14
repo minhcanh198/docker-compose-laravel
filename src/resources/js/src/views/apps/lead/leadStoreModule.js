@@ -38,5 +38,14 @@ export default {
                     .catch(error => reject(error))
             })
         },
+
+        fetchCategories(ctx, userData) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get('/api/category/parents')
+                    .then(response => resolve(response))
+                    .catch(error => reject(error))
+            })
+        },
     },
 }

@@ -1,11 +1,12 @@
 <template>
     <div>
         <lead-list-filter
-            :category-options="[]"
+            :category-options="categoryOptions"
+            :category-filter.sync="categoryFilter"
             :provider-options="[]"
             :country-options="countryOptions"
             :country-filter.sync="countryFilter"
-            :date-filter.sync="dateFilter"
+            @date-changed="updateDateFilter"
         ></lead-list-filter>
         <b-card title="All leads">
             <!-- search input -->
@@ -27,6 +28,7 @@
             <!-- table -->
             <vue-good-table
                 mode="remote"
+                :isLoading.sync="isLoading"
                 :columns="columns"
                 :rows="rows"
                 :rtl="direction"
@@ -40,12 +42,13 @@
                     selectionInfoClass: 'custom-class',
                     selectionText: 'rows selected',
                     clearSelectionText: 'clear',
-                    disableSelectInfo: true,
+                    disableSelectInfo: false,
                     selectAllByGroup: true,
                   }"
                 :pagination-options="{
                     enabled: true,
                   }"
+
                 @on-sort-change="onSortChange"
             >
                 <template
@@ -118,9 +121,8 @@
                                     class="mr-50"
                                 />
                                <b-link
-                                   :to="{ name: 'lead-view', params: { id: props.row.id } }"
                                >
-                                   <span>View</span>
+                                   <span>Edit</span>
                                </b-link>
                               </b-dropdown-item>
                               <b-dropdown-item>
@@ -191,6 +193,9 @@
                         </div>
                     </div>
                 </template>
+                <div slot="selected-row-actions">
+                    <button class="btn btn-danger">Delete</button>
+                </div>
             </vue-good-table>
         </b-card>
     </div>
@@ -203,7 +208,7 @@ import {
 import LeadListFilter from "./LeadListFilter";
 import {VueGoodTable} from 'vue-good-table'
 import store from '@/store/index'
-import {onUnmounted} from "@vue/composition-api";
+import {onUnmounted, watch} from "@vue/composition-api";
 import leadStoreModule from "../leadStoreModule";
 import ToastificationContent from "../../../../@core/components/toastification/ToastificationContent";
 
@@ -224,6 +229,7 @@ export default {
     },
     data() {
         return {
+            isLoading: false,
             log: [],
             total: 0,
             pageLength: 5,
@@ -281,8 +287,11 @@ export default {
                     1: 'light-primary', 2: 'light-success', 3: 'light-danger', 4: 'light-warning', 5: 'light-info',
                 }],
             countryOptions: [],
-            countryFilter: "",
-            dateFilter: "",
+            categoryOptions: [],
+            providerOptions: [],
+            countryFilter: null,
+            categoryFilter: null,
+            dateFilter: null,
         }
     },
     computed: {
@@ -312,8 +321,22 @@ export default {
     },
     created() {
         this.fetchLeads()
-        this.fetchCountry()
+        this.fetchCountries()
+        this.fetchCategories()
     },
+
+    watch: {
+        categoryFilter() {
+            this.fetchLeads()
+        },
+        countryFilter() {
+            this.fetchLeads()
+        },
+        dateFilter() {
+            this.fetchLeads()
+        },
+    },
+
     methods: {
         formatCreatedAtDate(dateTime) {
             return dateTime.split(' ')[0]
@@ -356,21 +379,27 @@ export default {
         },
 
         fetchLeads() {
+            this.isLoading = true
             this.$store.dispatch('app-lead/fetchLeads', {
                 'per_page': this.pageLength,
                 'search': this.searchTerm,
-                'page': this.currentPage
+                'page': this.currentPage,
+                'category': this.categoryFilter,
+                'country': this.countryFilter,
+                'date': this.dateFilter,
             })
                 .then(res => {
+                    this.isLoading = false
                     this.rows = res.data.data
                     this.total = res.data.total
                 })
                 .catch(err => {
+                    this.isLoading = false
                     console.log(err)
                 })
         },
 
-        fetchCountry() {
+        fetchCountries() {
             this.$store.dispatch('app-lead/fetchCountries')
                 .then(res => {
                     res.data.forEach(({id, name}) => {
@@ -380,6 +409,20 @@ export default {
                 .catch(err => {
                     console.log(err)
                 })
+        },
+        fetchCategories() {
+            this.$store.dispatch('app-lead/fetchCategories')
+                .then(res => {
+                    res.data.forEach(({id, name}) => {
+                        this.categoryOptions.push({label: name, value: id})
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        updateDateFilter(date) {
+            this.dateFilter = date
         }
     },
 

@@ -71,7 +71,6 @@
 import {BCard, BCardHeader, BCardBody, BRow, BCol} from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
-import {codeBasic} from "../../../forms/form-element/date-time-picker/code";
 
 export default {
     components: {
@@ -88,16 +87,12 @@ export default {
             type: [String, null],
             default: null,
         },
-        dateFilter: {
-            type: [String, null],
-            default: null,
-        },
         countryFilter: {
-            type: [String, null],
+            type: [Number, null],
             default: null,
         },
         categoryFilter: {
-            type: [String, null],
+            type: [Number, null],
             default: null,
         },
         providerOptions: {
@@ -113,6 +108,17 @@ export default {
             required: true,
         },
     },
+    watch: {
+        dateFilter() {
+            this.$emit('date-changed', this.dateFilter)
+        }
+    },
+    data() {
+        return {
+            dateFilter: ""
+        }
+    },
+    methods: {}
 }
 </script>
 

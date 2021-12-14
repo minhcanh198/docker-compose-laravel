@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Lead;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 
 class LeadRepository
 {
@@ -13,9 +14,25 @@ class LeadRepository
 
     public function getAll(array $queryParams): LengthAwarePaginator
     {
-        return Lead::with(self::programRelationField)
-            ->with(self::providerRelationField)
-            ->paginate($queryParams['per_page'])
+        $sql = Lead::with(self::programRelationField)
+            ->with(self::providerRelationField);
+        if (isset($queryParams['category'])) {
+            $category = $queryParams['category'];
+            $sql->whereHas('program', function ($query) use ($category) {
+                $query->where('category_id', $category);
+            });
+        }
+        if (isset($queryParams['country'])) {
+            $countryID = $queryParams['country'];
+            $sql->whereHas('program', function ($query) use ($countryID) {
+                $query->where('country_id', $countryID);
+            });
+        }
+        if (isset($queryParams['date'])) {
+            $sql->whereDate('created_at', Carbon::parse($queryParams['date']));
+        }
+
+        return $sql->paginate($queryParams['per_page'])
             ->withQueryString();
     }
 
